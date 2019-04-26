@@ -130,7 +130,7 @@ class RMTable:
         for i in range(len(self.columns)):
             if 'U' not in self.dtypes[i]:
                 continue
-            w=np.where(np.char.find(self.table[self.columns[10]],'\t') != -1)[0]
+            w=np.where(np.char.find(self.table[self.columns[i]],b'\t') != -1)[0]
             if w.size > 0:
                 print('Illegal tabs detected! Replaced with "@@"')
                 self.table[self.columns[10]][w]=np.char.replace(self.table[self.columns[10]][w],'\t','@@')
