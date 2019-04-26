@@ -98,7 +98,7 @@ class RMTable:
     
     #Define standard entries for strings:
     standard_rm_method=['EVPA-linear fit','RM Synthesis - Pol. Int','RM Synthesis - Fractional polarization',
-                         'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','Unknown']
+                         'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','QUfit - Complex','Unknown']
     standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G','Unknown']
     standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','Unknown']
     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy','FRB']
@@ -109,6 +109,9 @@ class RMTable:
 
     def __str__(self):
         return self.table.__str__()
+    
+    def __len__(self):
+        return len(self.table)
 
     
     def write_FITS(self,filename,overwrite=False):
@@ -117,13 +120,13 @@ class RMTable:
         self.table.write(filename,overwrite=overwrite)
 
     def read_FITS(self,filename):
-        """Read in a FITS RMtable to an RMtable object. Takes filename as input parameter."""
-        self.table=at.Table.read('test.fits')
+        """Read in a FITS RMtable to this RMtable. Takes filename as input parameter. Overwrites current table entries."""
+        self.table=at.Table.read(filename)
         self.size=len(self.table)
         
     def write_tsv(self,filename):
         """Write RMtable to ASCII tsv table format. Takes filename as input parameter."""
-        #Check for tabs in the string columns. If found convert to '&&' (does this have the same length?)
+        #Check for tabs in the string columns. If found convert to '@@' (does this have the same length?)
         for i in range(len(self.columns)):
             if 'U' not in self.dtypes[i]:
                 continue
@@ -132,7 +135,7 @@ class RMTable:
                 print('Illegal tabs detected! Replaced with "@@"')
                 self.table[self.columns[10]][w]=np.char.replace(self.table[self.columns[10]][w],'\t','@@')
         
-        row_string='{:}\t'*len(test.columns)
+        row_string='{:}\t'*len(self.columns)
         row_string=row_string[:-1]+'\n' #Change last tab into newline.
         header_string='#'+'\t'.join(self.columns)+'\n'
         with open(filename,'w') as f:
@@ -141,8 +144,8 @@ class RMTable:
                 f.write(row_string.format(*self.table[i]))
     
     def read_tsv(self,filename):
-        """Read in a ASCII tsv RMtable to an RMtable object. Takes filename as input parameter."""
-        table=np.genfromtxt('test.tsv',dtype=test.dtypes,names=test.columns,delimiter='\t',encoding=None)
+        """Read in a ASCII tsv RMtable to this RMtable object. Takes filename as input parameter. Overwrites existing table."""
+        table=np.genfromtxt(filename,dtype=self.dtypes,names=self.columns,delimiter='\t',encoding=None)
         self.table=at.Table(data=table,names=self.columns,dtype=self.dtypes)
         self.size=len(self.table)
         
@@ -151,7 +154,7 @@ class RMTable:
         Returns array."""
         return self.table.as_array()
     
-    def input_numpy(self,array,verbose=False,verify=False):
+    def input_numpy(self,array,verbose=False,verify=True):
         """Converts an input numpy array into an RM table object.
         Requires that array has named columns matching standard column names.
         Will automatically fill in missing columns
@@ -183,6 +186,10 @@ class RMTable:
         
         #Report extraneous columns:
         if verbose:
+            print('Incorporated columns:')
+            print(*matching_columns,sep='\n')
+            print()
+
             print('Unused columns (check for spelling/capitalization errors!):')
             print(*additional_columns,sep='\n')
             print()
@@ -217,6 +224,7 @@ class RMTable:
         for col in missing_columns:
             newtable[self.columns.index(col)]=np.repeat(self.blanks[self.columns.index(col)],Nrows)
             print(col)
+        print()
 
         for i in range(len(newtable)):
             newtable[i]=at.Column(data=newtable[i],name=self.columns[i],dtype=self.dtypes[i])
@@ -234,8 +242,11 @@ class RMTable:
         return self.table.to_pandas()
     
     def __getitem__(self,key):
-        #Seems to be working for normal indexing?
+        #Returns row, column, or table objects, as determined by astropy.table.
         return self.table[key]
+
+    def __setitem__(self,key,item):
+        self.table[key]=item
     
 
     def verify_limits(self):
@@ -311,7 +322,7 @@ class RMTable:
 #     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy']
 #     standard_flux_type=['Unknown','Integrated','Peak']
 
-    def merge_tables(self,table2):
+    def append_to_table(self,table2):
         """This function concatenates a second RMtable to the end of this one.
         Input parameter: table2, an RMtable object.
         Output: None"""
@@ -340,3 +351,36 @@ def calculate_missing_coordinates_column(long,lat,to_galactic):
 
     return new_long,new_lat
 
+
+def read_FITS(filename):
+    """Read in a FITS RMtable to an RMtable object. Takes filename as input parameter. Returns RMTable."""
+    cat=RMTable()
+    cat.read_FITS(filename)
+    return cat
+
+def read_tsv(filename):
+    """Read in a ASCII tsv RMtable to an RMtable object. Takes filename as input parameter. Returns RMTable."""
+    cat=RMTable()
+    cat.read_tsv(filename)
+    return cat
+
+def input_numpy(array,verbose=False,verify=False):
+    """Converts an input numpy array into an RM table object.
+    Requires that array has named columns matching standard column names.
+    Will automatically fill in missing columns
+    Input parameters: array (numpy ndarray): array to transform.
+                      verbose (Boolean): report missing columns
+                      verify (Boolean): check if values conform to standard.
+    Returns RMTable."""
+    cat=RMTable()
+    cat.input_numpy(array,verbose=verbose,verify=verify)
+    return cat
+
+def from_table(table):
+    """Converts an Astropy table (with the correct columns) into an RMTable.
+    Useful when sub-selection of a larger RMTable has returned an astropy table.
+    Returns RMTable."""
+    cat=RMTable()
+    cat.table=table
+    cat.size=len(table)
+    return cat
