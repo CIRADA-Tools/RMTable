@@ -1,5 +1,5 @@
 # RMTable
-Code to read/write tables of rotation measures following the proposed standard, in Python.
+Code to read/write tables of rotation measures following the proposed standard, in Python 3.
 
 Current working document for the RM Standard definition:
 
