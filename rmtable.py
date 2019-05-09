@@ -30,7 +30,7 @@ class RMTable:
             ['rm_err','f4',[0,np.inf],np.nan],
             ['rm_width','f4',[0,np.inf],np.nan],
             ['rm_width_err','f4',[0,np.inf],np.nan],
-            ['complex_flag','U1','','U'],
+            ['complex_flag','U2','','U'],
             ['complex_test','U80','',''],
             ['rm_method','U40','','Unknown'],
             ['ionosphere','U40','','Unknown'],
@@ -133,7 +133,16 @@ class RMTable:
             w=np.where(np.char.find(self.table[self.columns[i]],b'\t') != -1)[0]
             if w.size > 0:
                 print('Illegal tabs detected! Replaced with "@@"')
-                self.table[self.columns[10]][w]=np.char.replace(self.table[self.columns[10]][w],'\t','@@')
+                self.table[self.columns[i]][w]=np.char.replace(self.table[self.columns[i]][w],b'\t',b'@@')
+        #Similarly, check for newlines, and replace with double space ('  ')
+        for i in range(len(self.columns)):
+            if 'U' not in self.dtypes[i]:
+                continue
+            w=np.where(np.char.find(self.table[self.columns[i]],b'\n') != -1)[0]
+            if w.size > 0:
+                print('Illegal newlines detected! Replaced with "  "')
+                self.table[self.columns[i]][w]=np.char.replace(self.table[self.columns[i]][w],b'\n',b'  ')
+
         
         row_string='{:}\t'*len(self.columns)
         row_string=row_string[:-1]+'\n' #Change last tab into newline.
