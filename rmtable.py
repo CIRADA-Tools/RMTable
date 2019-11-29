@@ -98,9 +98,10 @@ class RMTable:
     
     #Define standard entries for strings:
     standard_rm_method=['EVPA-linear fit','RM Synthesis - Pol. Int','RM Synthesis - Fractional polarization',
-                         'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','QUfit - Complex','Unknown']
-    standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G','Unknown']
-    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','Unknown']
+                        'RM Synthesis',
+                         'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','QUfit - Multiple','Unknown']
+    standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G','Unknown','None','Not described']
+    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WRST','Effelsberg','ATA','Unknown']
     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy','FRB']
     standard_flux_type=['Unknown','Integrated','Peak']
 
@@ -256,6 +257,11 @@ class RMTable:
 
     def __setitem__(self,key,item):
         self.table[key]=item
+        
+    def verify_columns(self):
+        if self.columns != self.table.colnames:
+            print('Columns inconsistent with standard. Mismatching columns:')
+            print(set(self.table.colnames).symmetric_difference(set(self.columns)))
     
 
     def verify_limits(self):
