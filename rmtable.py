@@ -260,7 +260,7 @@ class RMTable:
         
     def verify_columns(self):
         if self.columns != self.table.colnames:
-            print('Columns inconsistent with standard. Mismatching columns:')
+            print("Columns inconsistent with standard. Check if deliberate (i.e., verify these aren't misspellings). Extraneous columns:")
             print(set(self.table.colnames).symmetric_difference(set(self.columns)))
     
 
@@ -330,19 +330,15 @@ class RMTable:
         if len(invalid_methods+invalid_polbias+invalid_telescope+invalid_type+invalid_flux) == 0:
             print('No problems found with standardized string entries.')
             
-#     standard_rm_method=['EVPA-linear fit','RM Synthesis - Pol. Int','RM Synthesis - Fractional polarization',
-#                          'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','Unknown']
-#     standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G','Unknown']
-#     standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','Unknown']
-#     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy']
-#     standard_flux_type=['Unknown','Integrated','Peak']
-
     def append_to_table(self,table2):
         """This function concatenates a second RMtable to the end of this one.
         Input parameter: table2, an RMtable object.
         Output: None"""
         self.table=at.vstack([self.table,table2.table],join_type='exact')
         self.size=len(self.table)
+        
+    def add_column(self,data,name):
+        self.table.add_column(at.Column(data=data,name=name))
 
     
 def calculate_missing_coordinates_column(long,lat,to_galactic):
