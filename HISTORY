@@ -1,22 +1,29 @@
 
-0.1.0: Initial catalog
+0.1.0 (26 Apr 2019): Initial catalog
 
-0.1.1: Fixed a problem with unintended newlines being printing in tsv files.
+0.1.1 (9 May 2019): Fixed a problem with unintended newlines being printing in tsv files.
 
-0.1.2: Fixed a problem with the coordinates for the Taylor 2009 catalog.
+0.1.2 (25 Jun 2019): Fixed a problem with the coordinates for the Taylor 2009 catalog.
 
-0.1.3: Changed/added several columns for the new CGPS catalog, to match the descriptions given in the paper.
+0.1.3 (17 Jul 2019): Changed/added several columns for the new CGPS catalog, to match the descriptions given in the paper.
 
-0.1.4: Found and fixed a mistake in the flux units for the new CGPS catalog, changed to conform to standard.
+0.1.4 (22 Jul 2019): Found and fixed a mistake in the flux units for the new CGPS catalog, changed to conform to standard.
 
-0.1.5: Large update of metadata to many catalogs added in 0.1.0. Metadata was taken from the text of the papers,
+0.1.5 (29 Nov 2019): Large update of metadata to many catalogs added in 0.1.0. Metadata was taken from the text of the papers,
        where values could be easily found.
 
-0.1.6: Added the Shannahan+2019 'THOR' RMs.
+0.1.6 (28 Jan 2020): Added the Shannahan+2019 'THOR' RMs.
 
-0.1.7: Removed new CGPS (not published yet). 
+0.1.7 (10 Apr 2020): Removed new CGPS (not published yet). 
     Removed 'Oppermann-sourced' RMs: some were duplicates of other catalogs I processed, some were missing sources for unknown reasons.
     Corrected Vernstrom 2018 catalog; some declinations were computed wrongly.
     Added Gaensler 2001 RMs.
     Added Clarke 2001 RMs; these were not available from the paper, but were supplied by Tracy Clarke. Note these are NOT the Galactic-subtracted RMs, and are NOT the cluster-dispersion added errors.
-    Added Ma 2018 RMs; RMTable was supplied directly by Jackie Ma.
+    Added Ma 2019 RMs; RMTable was supplied directly by Jackie Ma.
+
+0.1.8 (11 Sep 2020): Added rmsf_fwhm column; updated RMTable version number to 1.1. All catalogs updated to V1.1 (setting rmwf_fwhm to NaN).
+    Fixed problems reported with some sources have declinations of exactly 0: this was a bug in how some machine readable tables were being processed.
+        Affected catalogs: Taylor 2009, Van Eck 2011, Law 2011, Kim 2016
+    Added Ma 2020 RMs; RMTable was supplied directly by Jackie Ma, and modified only by updating to V1.1 and updating catalog and data_ref bibcodes.
+    Added POGS-II RMs (Riseley 2020); RMTable was supplied by Chris Riseley and modified only minimally (merging pulsar and EGS tables together, converting some extra columns to flag columns, updating to V1.1).
+
