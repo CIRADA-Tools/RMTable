@@ -19,7 +19,7 @@ class RMTable:
     Will have associated methods for reading, writing, outputting to various types """
     def __init__(self):
         # Column, dtype, [min,max],blank value
-        version='1.0'
+        version='1.1'
         standard=[  
             ['ra','f8',[0,360],None],
             ['dec','f8',[-90,90],None],
@@ -65,6 +65,7 @@ class RMTable:
             ['maxfreq','f4',[0,np.inf],np.nan],
             ['channelwidth','f4',[0,np.inf],np.nan],
             ['Nchan','i4',[0,np.inf],np.nan],
+            ['rmsf_fwhm','f4',[0,np.inf],np.nan],
             ['noise_chan','f4',[0,np.inf],np.nan],
             ['telescope','U80','','Unknown'],
             ['int_time','f4',[0,np.inf],np.nan],
@@ -85,25 +86,32 @@ class RMTable:
             ['flagC_value','U40','',''],
             ['notes','U200','','']        ]
         
-        self.columns=[x[0] for x in standard]
-        self.dtypes=[x[1] for x in standard]
-        self.limits=[x[2] for x in standard]
-        self.blanks=[x[3] for x in standard]
+        self.standard_columns=[x[0] for x in standard]
+        self.standard_dtypes=[x[1] for x in standard]
+        self.standard_limits=[x[2] for x in standard]
+        self.standard_blanks=[x[3] for x in standard]
         
         
-        self.table=at.Table(names=self.columns,dtype=self.dtypes)
+        self.table=at.Table(names=self.standard_columns,dtype=self.standard_dtypes)
         self.table.meta['VERSION']=version
+        
+        #These are for when extra columns might be added.
+        #They point into the table where the columns can be found.
+        self.columns=self.table.dtype.names
+        self.dtype=[x[1] for x in self.table.dtype.descr]
+        self.colcount=len(self.columns)
         
         self.size=0
     
     #Define standard entries for strings:
     standard_rm_method=['EVPA-linear fit','RM Synthesis - Pol. Int','RM Synthesis - Fractional polarization',
                         'RM Synthesis',
-                         'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','QUfit - Multiple','Unknown']
+                         'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','QUfit - Multiple','QUfit-Other'
+                         'Unknown']
     standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G','Unknown','None','Not described']
-    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WRST','Effelsberg','ATA','Unknown']
+    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WRST','Effelsberg','ATA','ASKAP','Unknown']
     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy','FRB']
-    standard_flux_type=['Unknown','Integrated','Peak']
+    standard_flux_type=['Unknown','Integrated','Peak','Box']
 
     def __repr__(self):
         return self.table.__repr__()
@@ -114,6 +122,23 @@ class RMTable:
     def __len__(self):
         return len(self.table)
 
+    def update_details(self):
+        """Updates the 'actual' properties, which describe the columns present
+        in the table, even if different from the standard.
+        """
+        self.columns=self.table.dtype.names
+        self.dtype=[x[1] for x in self.table.dtype.descr]
+        self.colcount=len(self.columns)
+        self.size=len(self.table)
+    
+    def copy(self):
+        """Creates a copy of the table as a new variable, which can be safely
+        modified without affecting the original.
+        """
+        newtable=RMTable()
+        newtable.table=self.table.copy()
+        newtable.update_details()
+        return newtable
     
     def write_FITS(self,filename,overwrite=False):
         """Write RMtable to FITS table format. Takes filename as input parameter.
@@ -121,31 +146,33 @@ class RMTable:
         self.table.write(filename,overwrite=overwrite)
 
     def read_FITS(self,filename):
-        """Read in a FITS RMtable to this RMtable. Takes filename as input parameter. Overwrites current table entries."""
+        """Read in a FITS RMtable to this RMtable. Takes filename as input parameter. Overwrites current table entries.
+        Does not confirm adherence to the standard: reads in as-is."""
         self.table=at.Table.read(filename)
-        self.size=len(self.table)
+        self.update_details()
         
     def write_tsv(self,filename):
-        """Write RMtable to ASCII tsv table format. Takes filename as input parameter."""
-        #Check for tabs in the string columns. If found convert to '@@' (does this have the same length?)
+        """Write RMtable to ASCII tsv table format. Takes filename as input parameter. Should automatically overwrite an existing file (not tested)
+        Currently does not save non-standard columns! TODO: Fix this!"""
+        #Check if string columns are internally represented as bytes or strings.
+        #This causes no end of trouble since the replace functions need to have
+        # maching types, and astropy.Table isn't fussy enough to be consistent.
+        #Check for tabs in the string columns. If found convert to '@@' (does this have the same length?)        
         for i in range(len(self.columns)):
-            if 'U' not in self.dtypes[i]:
+            if ('U' not in self.dtype[i]) and ('S' not in self.dtype[i]):
                 continue
-            w=np.where(np.char.find(self.table[self.columns[i]],b'\t'.decode()) != -1)[0]
+            w=np.where(np.char.find(self.table[self.columns[i]].data.astype(str),'\t') != -1)[0]
             if w.size > 0:
                 print('Illegal tabs detected! Replaced with "@@"')
-                self.table[self.columns[i]][w]=np.char.replace(self.table[self.columns[i]][w],b'\t',b'@@')
+                self.table[self.columns[i]][w]=np.char.replace(self.table[self.columns[i]][w].data.astype(str),'\t','@@')
         #Similarly, check for newlines, and replace with double space ('  ')
-        for i in range(len(self.columns)):
-            if 'U' not in self.dtypes[i]:
-                continue
-            w=np.where(np.char.find(self.table[self.columns[i]],b'\n'.decode()) != -1)[0]
+            w=np.where(np.char.find(self.table[self.columns[i]].data.astype(str),'\n') != -1)[0]
             if w.size > 0:
                 print('Illegal newlines detected! Replaced with "  "')
-                self.table[self.columns[i]][w]=np.char.replace(self.table[self.columns[i]][w],b'\n',b'  ')
+                self.table[self.columns[i]][w]=np.char.replace(self.table[self.columns[i]][w].data.astype(str),'\n','  ')
 
         
-        row_string='{:}\t'*len(self.columns)
+        row_string='{:}\t'*self.colcount
         row_string=row_string[:-1]+'\n' #Change last tab into newline.
         header_string='#'+'\t'.join(self.columns)+'\n'
         with open(filename,'w') as f:
@@ -154,32 +181,58 @@ class RMTable:
                 f.write(row_string.format(*self.table[i]))
     
     def read_tsv(self,filename):
-        """Read in a ASCII tsv RMtable to this RMtable object. Takes filename as input parameter. Overwrites existing table."""
-        table=np.genfromtxt(filename,dtype=self.dtypes,names=self.columns,delimiter='\t',encoding=None)
-        self.table=at.Table(data=table,names=self.columns,dtype=self.dtypes)
-        self.size=len(self.table)
+        """Read in a ASCII tsv RMtable to this RMtable object. Takes filename as input parameter. 
+        Overwrites existing table if present.
+        Input: filename (str): path to .tsv file.
+        """
+        #Read in table (generically)
+        table=np.genfromtxt(filename,dtype=None,names=True,delimiter='\t',encoding=None)
+        
+        #Try to get all the default columns into the correct formats.
+        names=table.dtype.names
+        dtypes=[]
+        #If a defaut column, force to default type (to enforce typing/string length limits)
+        #otherwise, use whatever it got read in as.
+        for i in range(len(names)):         
+            if names[i] in self.standard_columns:
+                index=self.columns.index(names[i])
+                dtypes.append(self.standard_dtypes[index])
+            else:
+                dtypes.append(table.dtype.fields[names[i]][0].str)
+
+
+        self.table=at.Table(data=table,names=names,dtype=dtypes)
+        self.update_details()
         
     def to_numpy(self):
         """Converts RMtable to Numpy ndarray (with named columns).
         Returns array."""
         return self.table.as_array()
     
-    def input_numpy(self,array,verbose=False,verify=True):
+    def input_numpy(self,array,verbose=False,verify=True,keep_cols=[]):
         """Converts an input numpy array into an RM table object.
         Requires that array has named columns matching standard column names.
-        Will automatically fill in missing columns
+        Will automatically fill in missing columns with default values.
+        Non-standard columns listed in keep_cols will be kept, otherwise they will be discarded.
         Input parameters: array (numpy ndarray): array to transform.
                           verbose (Boolean): report missing columns
-                          verify (Boolean): check if values conform to standard."""
+                          verify (Boolean): check if values conform to standard.
+                          keep_cols (list): List of extra columns to keep."""
         
         Nrows=array.size
-        self.size=Nrows
 
         #This function needs to:
         #Check that columns in ndarray have correct names, and no extra columns are present. (case senstitive?)
         #Check for missing essential columns?
         #Build new table, mapping correct input columns and adding appropriate blanks.
         #Generate second coordinate system if missing. 
+        
+        #Check for missing keep_col entries, and stop if they're not present in the array.
+        missing_keep_cols=[ column for column in keep_cols if column not in array.dtype.names ]
+        if len(missing_keep_cols) > 0:
+            print('The following columns cannot be kept. Check spelling!')
+            print(*missing_keep_cols,sep=',')
+            raise RuntimeError()
 
         newtable=[None] * len(self.columns)   
         array_columns=array.dtype.names
@@ -191,6 +244,8 @@ class RMTable:
                 matching_columns.append(col)
                 missing_columns.remove(col)
                 newtable[self.columns.index(col)]=array[col]
+            elif col in keep_cols:
+                pass
             else:
                 additional_columns.append(col)
         
@@ -206,7 +261,7 @@ class RMTable:
         
         #Check position columns, generate missing ones
         if ('ra' in matching_columns) and ('l' in matching_columns):
-            pass  #All is well.
+            pass  #Both present, all is well.
         elif ('ra' in matching_columns) and ('l' not in matching_columns):
             #calculate Galactic:
             long,lat=calculate_missing_coordinates_column(array['ra'],array['dec'],True)
@@ -227,7 +282,7 @@ class RMTable:
             missing_columns.remove('dec')
         else:
             print('No position columns found in input table! Make sure RA/Dec or l/b columns haven\'t been lost!')
-            raise RuntimeWarning()
+            raise RuntimeError()
         
         #Create missing columns with blank values:
         print("Missing columns (filling with blanks):")
@@ -242,10 +297,15 @@ class RMTable:
         #Turn everything into a RMtable, and append:
         newrows=at.Table(data=newtable,names=self.columns,dtype=self.dtypes)
         self.table=at.vstack([self.table,newrows],join_type='exact')
+        
+        #Add kept columns:
+        for column in keep_cols:
+            self.add_column(array[column],column)
     
         if verify==True:
             self.verify_limits()
-        return self
+        self.update_details()
+
     
     def to_pandas(self):
         """Converts RMtable to pandas dataframe. Returns dataframe."""
@@ -259,9 +319,15 @@ class RMTable:
         self.table[key]=item
         
     def verify_columns(self):
-        if self.columns != self.table.colnames:
-            print("Columns inconsistent with standard. Check if deliberate (i.e., verify these aren't misspellings). Extraneous columns:")
-            print(set(self.table.colnames).symmetric_difference(set(self.columns)))
+        if self.standard_columns != self.table.colnames:
+            print("Columns inconsistent with standard. Check if deliberate (i.e., verify these aren't misspellings).")
+            extra_columns=[ column for column in self.columns if column not in self.standard_columns ]
+            missing_columns=[ column for column in self.standard_columns if column not in self.columns ]
+            print('Extra columns: ',end='')
+            print(extra_columns)
+            print('Missing colunns: ',end='')
+            print(missing_columns)
+            #print(set(self.table.colnames).symmetric_difference(set(self.standard_columns)))
     
 
     def verify_limits(self):
@@ -269,14 +335,16 @@ class RMTable:
         on allowed numerical values. Mostly important for angles, as the standard uses [0,180) and not (-90,90].
         Non-conforming entries should be checked and fixed before incorporation into the master catalog."""
         good=True #Remains true until a non-conforming entry is found.
-        for i in range(len(self.columns)):
-            if self.limits[i]=='': #ignore string columns
+        for i in range(len(self.standard_columns)):
+            if self.standard_columns[i] not in self.columns: #ignore missing columns.
                 continue
-            data=self.table[self.columns[i]]
-            overmax=(data >= self.limits[i][1]).sum() #count how many outside of acceptable range
-            undermin=(data < self.limits[i][0]).sum()
+            if self.standard_limits[i]=='': #ignore string columns
+                continue
+            data=self.table[self.standard_columns[i]]
+            overmax=(data > self.standard_limits[i][1]).sum() #count how many outside of acceptable range
+            undermin=(data < self.standard_limits[i][0]).sum()
             if overmax+undermin > 0:
-                print('Column \'{}\' has {} entries outside the range of allowed values!'.format(self.columns[i],overmax+undermin))
+                print('Column \'{}\' has {} entries outside the range of allowed values!'.format(self.standard_columns[i],overmax+undermin))
                 good=False
         if good == True:
             print('All columns conform with standard.')
@@ -330,17 +398,48 @@ class RMTable:
         if len(invalid_methods+invalid_polbias+invalid_telescope+invalid_type+invalid_flux) == 0:
             print('No problems found with standardized string entries.')
             
-    def append_to_table(self,table2):
+    def append_to_table(self,table2,join_type='exact'):
         """This function concatenates a second RMtable to the end of this one.
         Input parameter: table2, an RMtable object.
+                        join_type (str): 'exact' - requires both tables have exactly the same columns.
+                                        'inner' - only columns common to both.
+                                        'outer' - keep all columns, masking any missing from one table.
         Output: None"""
-        self.table=at.vstack([self.table,table2.table],join_type='exact')
+        self.table=at.vstack([self.table,table2.table],join_type=join_type)
         self.size=len(self.table)
         
     def add_column(self,data,name):
+        """Add a new column to a table.
+        Inputs: data (list- or array-like): column data. 
+                        (Also accepts scalars, which are repeated to all rows)
+                name (str): name of the new column.
+        """
         self.table.add_column(at.Column(data=data,name=name))
+        self.update_details()
+        
+    def add_missing_columns(self):
+        """Adds in any missing default columns, with their default (blank) values.
+        Can be used to make a table compliant with the standard in terms of having
+        all the columns.
+        """
+        missing_columns=[ column for column in self.standard_columns if column not in self.columns ]
+        for column in missing_columns:
+            i=self.standard_columns.index(column)
+            self.table.add_column(at.Column(data=self.standard_blanks[i],name=column))
+        self.update_details()
 
-    
+        
+        
+    def remove_column(self,name):
+        """Removes an existing column. Will not allow removal of a default column.
+        Inputs: name (str): name of the column to be removed.
+        """
+        self.table.remove_column(name)
+        self.update_details()
+
+
+
+
 def calculate_missing_coordinates_column(long,lat,to_galactic):
     """Calculate a new pair of coordinate columns (equatorial/galactic) given the other pair and specified direction.
     Assumes input columns are already in degrees.
@@ -364,28 +463,32 @@ def calculate_missing_coordinates_column(long,lat,to_galactic):
 
 
 def read_FITS(filename):
-    """Read in a FITS RMtable to an RMtable object. Takes filename as input parameter. Returns RMTable."""
     cat=RMTable()
     cat.read_FITS(filename)
     return cat
+read_FITS.__doc__=RMTable.read_FITS.__doc__
+
 
 def read_tsv(filename):
-    """Read in a ASCII tsv RMtable to an RMtable object. Takes filename as input parameter. Returns RMTable."""
     cat=RMTable()
     cat.read_tsv(filename)
     return cat
+read_tsv.__doc__=RMTable.read_tsv.__doc__
+
 
 def input_numpy(array,verbose=False,verify=False):
-    """Converts an input numpy array into an RM table object.
-    Requires that array has named columns matching standard column names.
-    Will automatically fill in missing columns
-    Input parameters: array (numpy ndarray): array to transform.
-                      verbose (Boolean): report missing columns
-                      verify (Boolean): check if values conform to standard.
-    Returns RMTable."""
+#    """Converts an input numpy array into an RM table object.
+#    Requires that array has named columns matching standard column names.
+#    Will automatically fill in missing columns
+#    Input parameters: array (numpy ndarray): array to transform.
+#                      verbose (Boolean): report missing columns
+#                      verify (Boolean): check if values conform to standard.
+#    Returns RMTable."""
     cat=RMTable()
     cat.input_numpy(array,verbose=verbose,verify=verify)
     return cat
+input_numpy.__doc__=RMTable.input_numpy.__doc__
+
 
 def from_table(table):
     """Converts an Astropy table (with the correct columns) into an RMTable.
@@ -393,5 +496,23 @@ def from_table(table):
     Returns RMTable."""
     cat=RMTable()
     cat.table=table
-    cat.size=len(table)
+    cat.update_details()
     return cat
+
+def merge_tables(table1, table2,join_type='exact'):
+    """Merges two RMTables into a single table.
+    Inputs: table1 (RMTable): first table to be merged.
+            table2 (RMTable): second table to be merged.
+            join_type (str): 'exact' - requires both tables have exactly the same columns.
+                             'inner' - only columns common to both.
+                             'outer' - keep all columns, masking any missing from one table.
+    """
+    new_table=table1.copy() #Copy old table to avoid affecting that variable.
+    new_table.update_details()
+    new_table.append_to_table(table2,join_type=join_type)
+    return new_table
+
+
+
+
+
