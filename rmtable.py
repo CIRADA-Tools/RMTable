@@ -19,7 +19,7 @@ class RMTable:
     Will have associated methods for reading, writing, outputting to various types """
     def __init__(self):
         # Column, dtype, [min,max],blank value
-        version='1.1'
+        version='1.2'
         standard=[  
             ['ra','f8',[0,360],None],
             ['dec','f8',[-90,90],None],
@@ -76,14 +76,7 @@ class RMTable:
             ['catalog','U50','',''],
             ['dataref','U400','',''],
             ['cat_id','U40','',''],
-            ['id','i4',[0,np.inf],np.nan],
             ['type','U40','',''],
-            ['flagA_name','U40','',''],
-            ['flagA_value','U40','',''],
-            ['flagB_name','U40','',''],
-            ['flagB_value','U40','',''],
-            ['flagC_name','U40','',''],
-            ['flagC_value','U40','',''],
             ['notes','U200','','']        ]
         
         self.standard_columns=[x[0] for x in standard]
@@ -115,6 +108,9 @@ class RMTable:
 
     def __repr__(self):
         return self.table.__repr__()
+    
+    def _repr_html_(self):
+        return self.table._repr_html_()
 
     def __str__(self):
         return self.table.__str__()
@@ -238,7 +234,7 @@ class RMTable:
         array_columns=array.dtype.names
         matching_columns=[]  #Track 'good' columns in input array
         additional_columns=[]  #Track 'useless' columns in input array
-        missing_columns=self.columns.copy()  #Track columns not present in table
+        missing_columns=list(self.columns).copy()  #Track columns not present in table
         for col in array_columns:
             if col in self.columns:  #Put the matching columns in the correct places
                 matching_columns.append(col)
@@ -287,15 +283,15 @@ class RMTable:
         #Create missing columns with blank values:
         print("Missing columns (filling with blanks):")
         for col in missing_columns:
-            newtable[self.columns.index(col)]=np.repeat(self.blanks[self.columns.index(col)],Nrows)
+            newtable[self.columns.index(col)]=np.repeat(self.standard_blanks[self.columns.index(col)],Nrows)
             print(col)
         print()
 
         for i in range(len(newtable)):
-            newtable[i]=at.Column(data=newtable[i],name=self.columns[i],dtype=self.dtypes[i])
+            newtable[i]=at.Column(data=newtable[i],name=self.columns[i],dtype=self.standard_dtypes[i])
 
         #Turn everything into a RMtable, and append:
-        newrows=at.Table(data=newtable,names=self.columns,dtype=self.dtypes)
+        newrows=at.Table(data=newtable,names=self.columns,dtype=self.standard_dtypes)
         self.table=at.vstack([self.table,newrows],join_type='exact')
         
         #Add kept columns:
@@ -305,6 +301,7 @@ class RMTable:
         if verify==True:
             self.verify_limits()
         self.update_details()
+        return self
 
     
     def to_pandas(self):
@@ -313,7 +310,14 @@ class RMTable:
     
     def __getitem__(self,key):
         #Returns row, column, or table objects, as determined by astropy.table.
-        return self.table[key]
+        value=self.table[key]
+        #If the returned object is a whole table, wrap it back inside an RMTable
+        if type(value) == at.table.Table:  
+            subtable=RMTable()
+            subtable.table=value
+            subtable.update_details()
+            value=subtable
+        return value
 
     def __setitem__(self,key,item):
         self.table[key]=item

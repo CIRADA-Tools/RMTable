@@ -27,3 +27,10 @@
     Added Ma 2020 RMs; RMTable was supplied directly by Jackie Ma, and modified only by updating to V1.1 and updating catalog and data_ref bibcodes.
     Added POGS-II RMs (Riseley 2020); RMTable was supplied by Chris Riseley and modified only minimally (merging pulsar and EGS tables together, converting some extra columns to flag columns, updating to V1.1).
 
+0.1.9 (?): Small updates forgotten in the 0.1.8 changes:
+    Fixed catalog for POGS-II (Riseley 2020) to be bibcode.
+    Fixed fracpol column in old CGPS RMs (Brown 2003) and SGPS (Brown 2007), was in percent now in fraction.
+    Added rmsf_fwhm values from paper texts, for: 2009ApJ...707..114F, 2012ApJ...755...21M, 2015ApJ...815...49A, 2018A&A...613A..58V, 2018PASA...35...43R, 2019ApJ...871..215B, 2019ApJ...887L...7S, 2020MNRAS.497.3097M, 2020PASA...37...29R
+    Updated SPASS-ATCA catalog (2019MNRAS.485.1293S): fixed incorrect reference frequencies, added spectral index errors, added 2nd fitted components to catalog (3rd components were not in table, so still ignored), added position errors (adding RA/Dec errors into quadrature)
+    Converted master catalog to table version 1.2
+
