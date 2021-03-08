@@ -73,7 +73,7 @@ class RMTable:
             ['interval','f4',[0,np.inf],np.nan],
             ['leakage','f4',[0,np.inf],np.nan],
             ['beamdist','f4',[0,np.inf],np.nan],
-            ['catalog','U50','',''],
+            ['catalog','U50','',None],
             ['dataref','U400','',''],
             ['cat_id','U40','',''],
             ['type','U40','',''],

@@ -13,13 +13,13 @@ import rmtable as RMT
 
 
 #Reading in an RMTable from FITS:
-catalog=RMT.read_FITS('./VanEck2011_table.fits')
+catalog=RMT.read_FITS('VanEck2011_table.fits')
 print(catalog)
 
-#Get the list of standard columns:
+#Get the list of columns present in table:
 print(catalog.columns)
 
-#Get number of RMs:
+#Get number of RMs (2 methods):
 print(catalog.size)
 print(len(catalog))
 
@@ -27,14 +27,28 @@ print(len(catalog))
 print(catalog['rm'])
 print(catalog['l','b','rm','rm_err'])
 
-#Subsets:
-print(catalog[catalog['l'] < 90])
-#Note that current subsets become astropy tables/rows/columns, which are 
-# compatible with normal numpy arrays/operations.
+#Access row(s):
+print(catalog[0:10])
+
+#Extracting a subset of the catalog:
+selection=np.logical_and(catalog['l'] > 90,catalog['l'] < 270)
+#This is an array of booleans, that can be used to extract a portion of the catalog.
+print(catalog[selection])
+#Multiple selections are combined using numpy's logical_and function.
+
 
 #If you prefer numpy arrays or pandas dataframes, convert to those:
-print(catalog.to_numpy()[0])
+print(catalog.to_numpy())
 print(catalog.to_pandas())
+
+
+#Saving a sub-catalog:
+subcatalog=catalog[selection]
+subcatalog.write_FITS('subcatalog.fits',overwrite=True)
+
+
+
+
 
 
 #How to convert other tables containing RMs into RMTables.
@@ -58,7 +72,8 @@ cat['stokesI']=cat['stokesI']/1e3
 #And converting sexigessimal coordinates to decimal degrees, and storing the the
 #columns that already have the right names:
 cat['ra']=15*(cat['rah']+cat['ram']/60.+cat['ra']/3600.)
-cat['dec']=cat['decd']+(cat['decm']/60.+cat['dec']/3600.)*np.sign(cat['decd'])
+dec_sign=[ 1 if x==' +' else -1 for x in cat['dec_sign'] ]
+table.table['dec']=(cat['decd']+cat['decm']/60.+cat['dec']/3600.)*dec_sign
 #Note that these steps overwrite the data in the array, so DO NOT RUN TWICE!
 
 #Step 3: convert to RMTable. It will automatically identify which columns are
