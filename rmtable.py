@@ -64,7 +64,7 @@ class RMTable:
             ['minfreq','f4',[0,np.inf],np.nan],
             ['maxfreq','f4',[0,np.inf],np.nan],
             ['channelwidth','f4',[0,np.inf],np.nan],
-            ['Nchan','i4',[0,np.inf],np.nan],
+            ['Nchan','i4',[0,np.inf],-2147483648],
             ['rmsf_fwhm','f4',[0,np.inf],np.nan],
             ['noise_chan','f4',[0,np.inf],np.nan],
             ['telescope','U80','','Unknown'],
@@ -429,7 +429,10 @@ class RMTable:
         missing_columns=[ column for column in self.standard_columns if column not in self.columns ]
         for column in missing_columns:
             i=self.standard_columns.index(column)
-            self.table.add_column(at.Column(data=self.standard_blanks[i],name=column))
+            if self.standard_blanks[i] == None:
+                raise Exception('Missing essential column: {}'.format(column))
+            self.table.add_column(at.Column(data=self.standard_blanks[i],
+                                            name=column,dtype=self.standard_dtypes[i]))
         self.update_details()
 
         
