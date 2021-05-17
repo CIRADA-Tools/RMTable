@@ -26,7 +26,7 @@ class RMTable:
             ['l','f8',[0,360],None],
             ['b','f8',[-90,90],None],
             ['pos_err','f4',[0,np.inf],np.nan],
-            ['rm','f4',[-np.inf,np.inf],None],
+            ['rm','f4',[-np.inf,np.inf],np.nan],
             ['rm_err','f4',[0,np.inf],np.nan],
             ['rm_width','f4',[0,np.inf],np.nan],
             ['rm_width_err','f4',[0,np.inf],np.nan],
@@ -458,13 +458,13 @@ def calculate_missing_coordinates_column(long,lat,to_galactic):
     Outputs: two arrays, new_long and new_lat
     """
     if to_galactic:
-        sc=ac.SkyCoord(long,lat,frame='icrs',unit=(au.deg,au.deg))
+        sc=ac.SkyCoord(long,lat,frame='fk5',unit=(au.deg,au.deg))
         new_long=sc.galactic.l.deg
         new_lat=sc.galactic.b.deg
     else:
         sc=ac.SkyCoord(long,lat,frame='galactic',unit=(au.deg,au.deg))
-        new_long=sc.icrs.ra.deg
-        new_lat=sc.icrs.dec.deg
+        new_long=sc.fk5.ra.deg
+        new_lat=sc.fk5.dec.deg
 
     return new_long,new_lat
 
@@ -483,7 +483,7 @@ def read_tsv(filename):
 read_tsv.__doc__=RMTable.read_tsv.__doc__
 
 
-def input_numpy(array,verbose=False,verify=False):
+def input_numpy(array,verbose=False,verify=False,keep_cols=[]):
 #    """Converts an input numpy array into an RM table object.
 #    Requires that array has named columns matching standard column names.
 #    Will automatically fill in missing columns
@@ -492,7 +492,7 @@ def input_numpy(array,verbose=False,verify=False):
 #                      verify (Boolean): check if values conform to standard.
 #    Returns RMTable."""
     cat=RMTable()
-    cat.input_numpy(array,verbose=verbose,verify=verify)
+    cat.input_numpy(array,verbose=verbose,verify=verify,keep_cols=keep_cols)
     return cat
 input_numpy.__doc__=RMTable.input_numpy.__doc__
 
