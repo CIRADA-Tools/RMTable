@@ -11,7 +11,7 @@ fills in blank columns with default values.
 
 Some code demonstrating the use of RMTables can be found in examples.py.
 
-The prototype catalog is available in the master_catalog_* files.
+The prototype catalog is available in the master_catalog_* files. This catalog is provided on an as-is basis; there may be uncaught transcription errors in adapting the published catalogs into the master catalog format. It's also known that some of the published values/sources are unphysical (negative Stokes I, fractional polarizations outside of [0,1), unrealistic spectral indices, etc. Users should use their discretion when selecting sources in the catalog to use.
 
 A list of papers included (and excluded) from the master catalog can be found here:
 
