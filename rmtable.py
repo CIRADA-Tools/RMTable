@@ -42,8 +42,9 @@ class RMTable:
             ['reffreq_I','f4',[-np.inf,np.inf],np.nan],
             ['polint','f4',[0,np.inf],np.nan],
             ['polint_err','f4',[0,np.inf],np.nan],
-            ['pol_bias','U50','','Unknown'],
-            ['flux_type','U50','','Unknown'],
+            ['pol_bias','U40','','Unknown'],
+            ['flux_type','U40','','Unknown'],
+            ['aperture','f4',[0,np.inf],np.nan],
             ['fracpol','f4',[0,np.inf],np.nan],
             ['fracpol_err','f4',[0,np.inf],np.nan],
             ['polangle','f4',[0,180],np.nan],
@@ -73,7 +74,7 @@ class RMTable:
             ['interval','f4',[0,np.inf],np.nan],
             ['leakage','f4',[0,np.inf],np.nan],
             ['beamdist','f4',[0,np.inf],np.nan],
-            ['catalog','U50','',None],
+            ['catalog','U40','',None],
             ['dataref','U400','',''],
             ['cat_id','U40','',''],
             ['type','U40','',''],
@@ -101,10 +102,11 @@ class RMTable:
                         'RM Synthesis',
                          'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','QUfit - Multiple','QUfit-Other'
                          'Unknown']
-    standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G','Unknown','None','Not described']
-    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WRST','Effelsberg','ATA','ASKAP','Unknown']
+    standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G',
+                       '1986ApJ...302..306K','Unknown','None','Not described']
+    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WSRT','Effelsberg','ATA','ASKAP','Unknown']
     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy','FRB']
-    standard_flux_type=['Unknown','Integrated','Peak','Box']
+    standard_flux_type=['Unknown','Integrated','Peak','Box','Visibilities','Gaussian fit - Peak']
 
     def __repr__(self):
         return self.table.__repr__()
@@ -205,7 +207,8 @@ class RMTable:
         Returns array."""
         return self.table.as_array()
     
-    def input_numpy(self,array,verbose=False,verify=True,keep_cols=[]):
+    def input_numpy(self,array,verbose=False,verify=True,keep_cols=[],
+                    coordinate_system='icrs'):
         """Converts an input numpy array into an RM table object.
         Requires that array has named columns matching standard column names.
         Will automatically fill in missing columns with default values.
@@ -213,7 +216,11 @@ class RMTable:
         Input parameters: array (numpy ndarray): array to transform.
                           verbose (Boolean): report missing columns
                           verify (Boolean): check if values conform to standard.
-                          keep_cols (list): List of extra columns to keep."""
+                          keep_cols (list): List of extra columns to keep.
+                          coordinate_system (str): name of coordinate frame for
+                                                   ra and dec columns 
+                                                   (typically 'fk5' or 'icrs')
+       """
         
         Nrows=array.size
 
@@ -254,6 +261,14 @@ class RMTable:
             print('Unused columns (check for spelling/capitalization errors!):')
             print(*additional_columns,sep='\n')
             print()
+        #Check frame and convert to ICRS if needed, overwriting the ra and dec columns:
+        if ('ra' in matching_columns) and (coordinate_system is not 'icrs'):
+            print(f'Converting coordinates from {coordinate_system}.\n')
+            coords=ac.SkyCoord(array['ra'],array['dec'],frame=coordinate_system,
+                               unit='deg')
+            array['ra']=coords.icrs.ra.deg
+            array['dec']=coords.icrs.dec.deg
+        
         
         #Check position columns, generate missing ones
         if ('ra' in matching_columns) and ('l' in matching_columns):
@@ -458,13 +473,13 @@ def calculate_missing_coordinates_column(long,lat,to_galactic):
     Outputs: two arrays, new_long and new_lat
     """
     if to_galactic:
-        sc=ac.SkyCoord(long,lat,frame='fk5',unit=(au.deg,au.deg))
+        sc=ac.SkyCoord(long,lat,frame='icrs',unit=(au.deg,au.deg))
         new_long=sc.galactic.l.deg
         new_lat=sc.galactic.b.deg
     else:
         sc=ac.SkyCoord(long,lat,frame='galactic',unit=(au.deg,au.deg))
-        new_long=sc.fk5.ra.deg
-        new_lat=sc.fk5.dec.deg
+        new_long=sc.icrs.ra.deg
+        new_lat=sc.icrs.dec.deg
 
     return new_long,new_lat
 
@@ -520,6 +535,17 @@ def merge_tables(table1, table2,join_type='exact'):
     return new_table
 
 
+def convert_angles(angles):
+    """Converts an array of angles to follow the [0,180) degree convention
+    used in the RMTable standard.
+    Inputs: angles (array-like): angles (in degrees)
+    Returns: array of angles (in degrees) in the range [0,180)
+    """
+    #Multiple of 180° that should be added to force all values to be positive
+    n=np.ceil(np.abs(np.min(angles))/180)
+    
+    return np.mod(angles+180*n,180)
+    
 
 
 
