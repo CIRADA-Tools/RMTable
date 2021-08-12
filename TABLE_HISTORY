@@ -1,0 +1,19 @@
+This file records the history of changes to the RMTable standard.
+
+1.0: Initial version
+
+1.1: (25 Sep 2020)
+Added flexibility in terms of handling non-standard columns. 
+These will not be imported by the input_numpy function by default, but are preserved
+under read/write operations (read/write_FITS, read/write_TSV, to_numpy, to_pandas).
+Added rmsf_fwhm column, with the caveat that this is only really well-defined for RM synthesis.
+Added additional default string options.
+
+
+1.2 (Aug 2021)
+Removed columns that were seen as unnecessary: id, flagA/B/C_name, flagA/B/C_value.
+The functionality that the flags gave is not useful given the support for non-standard columns.
+The consolidated catalog doesn't really benefit from having those columns, so they can were removed.
+The id column, intended to give a unique source numbering to the consolidated catalog, isn't needed.
+The aperture column, which describes over how large a sky area the brightness/RM was determined, was added.
+Some string lengths were modified to be more consistent.

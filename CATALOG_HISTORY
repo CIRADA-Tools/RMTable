@@ -27,10 +27,30 @@
     Added Ma 2020 RMs; RMTable was supplied directly by Jackie Ma, and modified only by updating to V1.1 and updating catalog and data_ref bibcodes.
     Added POGS-II RMs (Riseley 2020); RMTable was supplied by Chris Riseley and modified only minimally (merging pulsar and EGS tables together, converting some extra columns to flag columns, updating to V1.1).
 
-0.1.9 (?): Small updates forgotten in the 0.1.8 changes:
+0.2.0 (12 Aug 2021):
+    Catalog version incremented to 0.2; 0.2.x will be used for versions produced during the paper writing and review.
+    From this point forward, catalogs will be called consolidated_catalog rather than master_catalog.
+    Within the GitHub repository the catalogs will be ZIPed to reduce data size.
     Fixed catalog for POGS-II (Riseley 2020) to be bibcode.
     Fixed fracpol column in old CGPS RMs (Brown 2003) and SGPS (Brown 2007), was in percent now in fraction.
     Added rmsf_fwhm values from paper texts, for: 2009ApJ...707..114F, 2012ApJ...755...21M, 2015ApJ...815...49A, 2018A&A...613A..58V, 2018PASA...35...43R, 2019ApJ...871..215B, 2019ApJ...887L...7S, 2020MNRAS.497.3097M, 2020PASA...37...29R
     Updated SPASS-ATCA catalog (2019MNRAS.485.1293S): fixed incorrect reference frequencies, added spectral index errors, added 2nd fitted components to catalog (3rd components were not in table, so still ignored), added position errors (adding RA/Dec errors into quadrature)
-    Converted master catalog to table version 1.2
+    Converted consolidated catalog to table version 1.2, removing deprecated columns and adding the aperture column as appropriate where known. Reviewing all coordinates and converting to ICRS as appropriate.
+    Taylor 2009: Added pos_err column, taking maximum of Declination or Right Ascension (corrected for units, declination effects) error. Converted coordintes from J2000 to ICRS.
+    Van Eck 2017: Added pos_err column, same method. Converted coordinates.
+    Schnitzeler 2019: Corrected pos_err column to use same method as above (previously was incorrect). flux_type added with new value: visibilities (fluxes estimated from uv-data, without imaging). Converted coordinates.
+    Mao 2010, 2012a, 2012b: Added flux_type and aperture. Converted coordinates.
+    O'Sullivan 2017: Fixed incorrect values for rm_width and rm_width_err where values should be missing.
+    Rossetti 2008: Added more accurate coordinates by cross-matching to B3 catalog, except for one source which had no counterpart (possible typo in source name?).
+    Kim 2016: Fixed mistaken telescope column; converted coordinates.
+    Papers that have had equatorial coordinates converted from J2000 to ICRS:    
+        Riseley 2018, Betti 2019, Costa 2016, 2018, Anderson 2015, Brown 2003, 2007, Feain 2009, Van Eck 2011, Simard-Normandin 1981, Klein 2003, Roy 2005, Mao 2008, Heald 2009, Vernstrom 2018, Law 2011, Broten 1988, Clegg 1992, Oren 1995, Minter 1996, Shanahan 2019, Gaensler 2001, Clarke 2001, Riseley 2020 
+    
+    Added new catalogs:
+        Livingston 2021: provided RMTable by author
+        Farnes 2014
+        Van Eck 2021 (New CGPS). Minor updates from published version: catalog name changed to bib code, data reference added for CGPS survey description paper, coordinates converted from J2000 to ICRS
+    
+    
+    
 

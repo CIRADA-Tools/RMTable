@@ -30,7 +30,7 @@ class RMTable:
             ['rm_err','f4',[0,np.inf],np.nan],
             ['rm_width','f4',[0,np.inf],np.nan],
             ['rm_width_err','f4',[0,np.inf],np.nan],
-            ['complex_flag','U2','','U'],
+            ['complex_flag','U1','','U'],
             ['complex_test','U80','',''],
             ['rm_method','U40','','Unknown'],
             ['ionosphere','U40','','Unknown'],
