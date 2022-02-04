@@ -98,15 +98,20 @@ class RMTable:
         self.size=0
     
     #Define standard entries for strings:
-    standard_rm_method=['EVPA-linear fit','RM Synthesis - Pol. Int','RM Synthesis - Fractional polarization',
-                        'RM Synthesis',
-                         'QUfit - Delta function','QUfit - Burn slab','QUfit - Gaussian','QUfit - Multiple','QUfit-Other'
+    standard_rm_method=['EVPA-linear fit','RM Synthesis - Pol. Int',
+                        'RM Synthesis - Fractional polarization',
+                        'RM Synthesis', 'QUfit', 'QUfit - Delta function',
+                        'QUfit - Gaussian x Burn Slab',
+                        'QUfit - Burn slab','QUfit - Gaussian','QUfit - Multiple',
                          'Unknown']
     standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G',
                        '1986ApJ...302..306K','Unknown','None','Not described']
-    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WSRT','Effelsberg','ATA','ASKAP','Unknown']
+    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WSRT','Effelsberg',
+                        'ATA','ASKAP','Unknown']
     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy','FRB']
     standard_flux_type=['Unknown','Integrated','Peak','Box','Visibilities','Gaussian fit - Peak']
+    standard_complexity_test=['Unknown','None','Sigma_add','Second moment',
+                              'QU-fitting']
 
     def __repr__(self):
         return self.table.__repr__()
@@ -413,6 +418,15 @@ class RMTable:
         if len(invalid_flux) > 0:
             print('The following non-standard flux measurement type(s) were found (at least once each):')
             print(*invalid_flux,sep='\n')
+            
+        invalid_complexity_test=[]
+        for entry in self.table['flux_type']:
+            if (entry not in self.standard_complexity_test) and (entry not in invalid_complexity_test):
+                invalid_complexity_test.append(entry)
+        if len(invalid_complexity_test) > 0:
+            print('The following non-standard complexity test type(s) were found (at least once each):')
+            print(*invalid_complexity_test,sep='\n')
+        
 
         if len(invalid_methods+invalid_polbias+invalid_telescope+invalid_type+invalid_flux) == 0:
             print('No problems found with standardized string entries.')
@@ -426,6 +440,7 @@ class RMTable:
         Output: None"""
         self.table=at.vstack([self.table,table2.table],join_type=join_type)
         self.size=len(self.table)
+        self.update_details()
         
     def add_column(self,data,name):
         """Add a new column to a table.
@@ -498,16 +513,23 @@ def read_tsv(filename):
 read_tsv.__doc__=RMTable.read_tsv.__doc__
 
 
-def input_numpy(array,verbose=False,verify=False,keep_cols=[]):
-#    """Converts an input numpy array into an RM table object.
-#    Requires that array has named columns matching standard column names.
-#    Will automatically fill in missing columns
-#    Input parameters: array (numpy ndarray): array to transform.
-#                      verbose (Boolean): report missing columns
-#                      verify (Boolean): check if values conform to standard.
-#    Returns RMTable."""
+def input_numpy(array,verbose=False,verify=False,keep_cols=[],coordinate_system='icrs'):
+    """Converts an input numpy array into an RM table object.
+    Requires that array has named columns matching standard column names.
+    Will automatically fill in missing columns with default values.
+    Non-standard columns listed in keep_cols will be kept, otherwise they will be discarded.
+    Input parameters: array (numpy ndarray): array to transform.
+                       verbose (Boolean): report missing columns
+                       verify (Boolean): check if values conform to standard.
+                       keep_cols (list): List of extra columns to keep.
+                       coordinate_system (str): name of coordinate frame for
+                                                ra and dec columns 
+                                                (typically 'fk5' or 'icrs')
+    """
+
     cat=RMTable()
-    cat.input_numpy(array,verbose=verbose,verify=verify,keep_cols=keep_cols)
+    cat.input_numpy(array,verbose=verbose,verify=verify,keep_cols=keep_cols,
+                    coordinate_system=coordinate_system)
     return cat
 input_numpy.__doc__=RMTable.input_numpy.__doc__
 
