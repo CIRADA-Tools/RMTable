@@ -52,5 +52,11 @@
         Van Eck 2021 (New CGPS). Minor updates from published version: catalog name changed to bib code, data reference added for CGPS survey description paper, coordinates converted from J2000 to ICRS
     
     
-    
+0.2.1:
+    Fixed mistaken coordinates in Van Eck+ 2018 (2018A&A...613A..58V) catalog.
+
+    Added new catalog:
+        Livingston 2022 (2022MNRAS.510..260L, SMC RMs): csv file supplied by author; catalog and dataref columns changed from DOI to bibcode.
+
+
 

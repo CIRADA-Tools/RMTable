@@ -52,47 +52,76 @@ subcatalog.write_FITS('subcatalog.fits',overwrite=True)
 
 
 #How to convert other tables containing RMs into RMTables.
-#Step 1: Read the other table into a numpy array with named columns matching
-#   the RMTable column names:
-cat=np.genfromtxt('./VanEck2011.dat',encoding=None,dtype=None,
-              delimiter=[6,6,3,3,5,4,3,3,5,4,5,3,5,3,7,5],
-            names=['l','b','rah','ram','ra','decd','decm','dec','stokesI',
-                   'polint','rm','rm_err','RMSynth','dRMsynth','NVSSRM','dNVSSRM'])
+#Read in machine-readable table (fixed-width ASCII file) of catalog,
+#into numpy ndarray. Note the fixed width columns are set with the ’delimiter’ 
+#keyword. Columns that match the standard are given names in the standard, 
+#to allow direct conversion; other columns must avoid name conflicts with
+#standard columns.
+cat=np.genfromtxt('VanEck2011.dat',encoding=None,dtype=None,
+                  delimiter=[6,6,3,3,5,2,2,3,3,5,4,5,3,5,3,7,5],
+                    names=['l','b','rah','ram','ras','dec_sign','decd',
+                           'decm','decs','stokesI','polint','rm','rm_err',
+                           'RMSynth','dRMsynth','NVSSRM','dNVSSRM'])
 #Setting the column names correctly is important to get the data into the RMTable.
 # Columns with incorrect names are ignored in the conversion process.
-#Note that I have called the RA seconds column simply 'ra', and Dec arcseconds 
-#   column simply 'dec'. This is because it's a pain in the ass to add columns
-#   to numpy arrays, so it's easier to modify existing columns (see step 2) than
-#   add new columns after.
+
+
+
+#The RA and Dec columns must be converted from sexigessimal to decimal.
+#The easiest way is to use Astropy's capability to read 'hms dms' strings:
+ra_strings=np.char.add(np.char.add(np.char.add(cat['rah'].astype(str),'h'),
+                                   np.char.add(cat['ram'].astype(str),'m')),
+                                   np.char.add(cat['ras'].astype(str),'s'))
+dec_strings=np.char.add(cat['dec_sign'],
+                        np.char.add(np.char.add(np.char.add(cat['decd'].astype(str),'d'),
+                                                np.char.add(cat['decm'].astype(str),'m')),
+                                                np.char.add(cat['decs'].astype(str),'s')))
+coords=ac.SkyCoord(ra_strings,dec_strings,frame='fk5')
+#Adding final decimal coordinate columns in to the numpy table:
+cat=np.lib.recfunctions.append_fields(cat,['ra','dec'],[coords.ra.deg,coords.dec.deg])
+
 
 #Step 2: do necessary unit conversions to match RMTable convention.
 #In this example, converting fluxes from mJy in the input table to Jy in the RMTable.
 cat['polint']=cat['polint']/1e3
 cat['stokesI']=cat['stokesI']/1e3
-#And converting sexigessimal coordinates to decimal degrees, and storing the the
-#columns that already have the right names:
-cat['ra']=15*(cat['rah']+cat['ram']/60.+cat['ra']/3600.)
-dec_sign=[ 1 if x==' +' else -1 for x in cat['dec_sign'] ]
-table.table['dec']=(cat['decd']+cat['decm']/60.+cat['dec']/3600.)*dec_sign
-#Note that these steps overwrite the data in the array, so DO NOT RUN TWICE!
+
 
 #Step 3: convert to RMTable. It will automatically identify which columns are
-#   part of the standard and which are not, based on the column names.
-table=RMT.input_numpy(cat,verbose=True,verify=True)
+#        part of the standard and which are not, based on the column names.
+table=RMT.input_numpy(cat,verbose=True,verify=True,coordinate_system='fk5')
 #If verbose=True, it will report which columns were used or ignored, and which
-#   are missing and filled with blanks.
+#are missing and filled with blanks.
 #If verify=True, it will check that the numerical values are as expected.
 #This typically means things like angle conventions (i.e. polarization angles 
-#   from [0,180)).
+#from [0,180)).
+#The coordinate system must be specified to ensure that coordinates are 
+#successfully converted to ICRS.
 
-#Step 4: add any information that wasn't in the input table. Most important is
-#   the source (catalog) of the RMs.
-table['catalog']='2008ApJ...688.1029M'  #This is the ADS Bibcode for Van Eck et al. 2011
+
+#Step 4: add any information that wasn't in the input table (but is in the text
+#        of the paper. Most important is the catalog bibcode.
+table['catalog']='2011ApJ...728...97V'
+table['rm_method']='EVPA-linear fit'
+table['ionosphere']='None'
+table['flux_type']='Peak'
+table['beam_maj']=0.01388888889
+table['minfreq']=1365e6
+table['maxfreq']=1515e6
+table['channelwidth']=3.57e6
+table['Nchan']=14
+table['noise_chan']=2e-3
+table['int_time']=120
+
+#The following lines check the table values for conformance with the standard
+# (within limits, and using standard string values where applicable).
+table.verify_limits()
+table.verify_standard_strings()
+
 
 #Step 5: Save the RMTable. Available formats are FITS and tsv. CSV is not allowed
 #   in case any string contain commas.
-table.write_tsv('example_table.tsv')
-
+table.write_FITS('VanEck2011_table.fits',overwrite=True)
 
 
 
