@@ -1,11 +1,13 @@
 # RMTable
 Code to read/write tables of rotation measures following the proposed standard, in Python 3.
 
-Detailed documentation, including example code, is available on the wiki [here](https://github.com/CIRADA-Tools/RMTable/wiki).  
-A full description of the RMTable standard is being written up and will be published soon.
+### [Documentation](https://github.com/CIRADA-Tools/RMTable/wiki)
+Detailed documentation, including installation instructions and example code, is available on the wiki linked above.  
 
+***
 
-Current working document for the RM Standard definition is [here](https://docs.google.com/document/d/1lo-W89G1X7xGoMOPHYS5japxJKPDamjEJ9uIGnRPnpo/edit).
+The paper describing the RMTable standard and the consolidated catalog is currently being refereed. The current draft, with a description of the RMTable standard, can be found [here](https://www.dropbox.com/s/ebdnhad8vypx4cc/RMTable.pdf?dl=0).  
+If that link dies, a slightly older working document for the RM Standard definition is [here](https://docs.google.com/document/d/1lo-W89G1X7xGoMOPHYS5japxJKPDamjEJ9uIGnRPnpo/edit).
 
 The main code is in rmtable.py, which contains the class definition for an 
 RMTable, which contains all the columns in the RM Standard and automatically
@@ -13,9 +15,13 @@ fills in blank columns with default values.
 
 Some code demonstrating the use of RMTables can be found in examples.py.
 
-The prototype catalog is available in the consolidated_catalog_* files. This catalog is provided on an as-is basis; there may be uncaught transcription errors in adapting the published catalogs into the RMTable catalog format. It's also known that some of the published values/sources are unphysical (negative Stokes I, fractional polarizations outside of [0,1), unrealistic spectral indices, etc. Users should use their discretion when selecting sources in the catalog to use.
+***
 
-A list of papers included, not yet converted, and excluded from the consolidated catalog can be found [here](https://docs.google.com/document/d/18jUUV0QmesTeZb0Ng_6MtdTouNxfWuaI59A5UpQY00s/edit?usp=sharing). Conversions of these catalogs, or new catalogs, into the RMTable format for inclusion into the consolidated catalog are very welcome.
+The prototype catalog is available in the consolidated_catalog_* files. This catalog is provided on an as-is basis; there may be uncaught transcription errors in adapting the published catalogs into the RMTable catalog format. It's also known that some of the published values/sources are unphysical (negative Stokes I, fractional polarizations outside of \[0,1), unrealistic spectral indices, etc). Users should use their discretion when selecting sources in the catalog to use. Please see Section 3.2 of the [paper](https://www.dropbox.com/s/ebdnhad8vypx4cc/RMTable.pdf?dl=0) for more suggestions on catalog usage.
+
+***
+
+Conversions of new catalogs into the RMTable format for inclusion into the consolidated catalog are very welcome. If you are interested in contributing a catalog to the consolidated catalog, or find any errors with the catalogs already included, please contact me.
 
 Cameron Van Eck (cameron.van.eck (at) utoronto.ca)
 
