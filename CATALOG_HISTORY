@@ -59,4 +59,8 @@
         Livingston 2022 (2022MNRAS.510..260L, SMC RMs): csv file supplied by author; catalog and dataref columns changed from DOI to bibcode.
 
 
-
+1.0.0:
+    Created VOTable version of catalog.
+    FITS version of catalog now contains UCD information.
+    No changes to contents of catalog.
+    Updating to version 1 in anticipation of no further major changes before publication.
