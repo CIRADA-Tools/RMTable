@@ -19,79 +19,80 @@ class RMTable:
     """A class for holding tables of RMs and associated columns.
     Will have associated methods for reading, writing, outputting to various types """
     def __init__(self):
-        # Column, dtype, [min,max],blank value,units,ucd
+        # Column, dtype, [min,max],blank value,units
         version='1.2'
         standard=[  
-            ['ra','f8',[0,360],None,'deg','pos.eq.ra'],
-            ['dec','f8',[-90,90],None,'deg','pos.eq.dec'],
-            ['l','f8',[0,360],None,'deg','pos.galactic.lon'],
-            ['b','f8',[-90,90],None,'deg','pos.galactic.lat'],
-            ['pos_err','f4',[0,np.inf],np.nan,'deg','stat.error;pos'],
-            ['rm','f4',[-np.inf,np.inf],np.nan,'rad.m-2','phys.polarization.rotMeasure'],
-            ['rm_err','f4',[0,np.inf],np.nan,'rad.m-2','stat.error;phys.polarization.rotMeasure'],
-            ['rm_width','f4',[0,np.inf],np.nan,'rad.m-2','phys.polarization.rotMeasure;stat.fwhm'],
-            ['rm_width_err','f4',[0,np.inf],np.nan,'rad.m-2','stat.error;phys.polarization.rotMeasure;stat.fwhm'],
-            ['complex_flag','U1','','U','','meta.code'],
-            ['complex_test','U80','','','','meta.note'],
-            ['rm_method','U40','','Unknown','','meta.note'],
-            ['ionosphere','U40','','Unknown','','meta.note'],
-            ['Ncomp','i4',[1,np.inf],1,'','meta.number'],
-            ['stokesI','f4',[0,np.inf],np.nan,'Jy','phot.flux.density;phys.polarization.stokes.I'],
-            ['stokesI_err','f4',[0,np.inf],np.nan,'Jy','stat.error;phot.flux.density;phys.polarization.stokes.I'],
-            ['spectral_index','f4',[-np.inf,np.inf],np.nan,'','spect.index'],
-            ['spectral_index_err','f4',[0,np.inf],np.nan,'','stat.error;spect.index'],
-            ['reffreq_I','f4',[-np.inf,np.inf],np.nan,'Hz','em.freq;phys.polarization.stokes.I'],
-            ['polint','f4',[0,np.inf],np.nan,'Jy','phot.flux.density;phys.polarization.linear'],
-            ['polint_err','f4',[0,np.inf],np.nan,'Jy','stat.error;phot.flux.density;phys.polarization.linear'],
-            ['pol_bias','U40','','Unknown','','meta.note'],
-            ['flux_type','U40','','Unknown','','meta.note'],
-            ['aperture','f4',[0,np.inf],np.nan,'deg','phys.angSize'],
-            ['fracpol','f4',[0,np.inf],np.nan,'','phys.polarization.linear'],
-            ['fracpol_err','f4',[0,np.inf],np.nan,'','stat.error;phys.polarization.linear'],
-            ['polangle','f4',[0,180],np.nan,'deg','pos.posAng;phys.polarization.linear'],
-            ['polangle_err','f4',[0,np.inf],np.nan,'deg','stat.error;pos.posAng;phys.polarization.linear'],
-            ['reffreq_pol','f4',[0,np.inf],np.nan,'Hz','em.freq;phys.polarization'],
-            ['stokesQ','f4',[-np.inf,np.inf],np.nan,'Jy','phot.flux.density;phys.polarization.stokes.Q'],
-            ['stokesQ_err','f4',[0,np.inf],np.nan,'Jy','stat.error;phot.flux.density;phys.polarization.stokes.Q'],
-            ['stokesU','f4',[-np.inf,np.inf],np.nan,'Jy','phot.flux.density;phys.polarization.stokes.U'],
-            ['stokesU_err','f4',[0,np.inf],np.nan,'Jy','stat.error;phot.flux.density;phys.polarization.stokes.U'],
-            ['derot_polangle','f4',[0,180],np.nan,'deg','pos.posAng;phys.polarization.linear'],
-            ['derot_polangle_err','f4',[0,np.inf],np.nan,'deg','stat.error;pos.posAng;phys.polarization.linear'],
-            ['stokesV','f4',[-np.inf,np.inf],np.nan,'Jy','phot.flux.density;phys.polarization.stokes.U'],
-            ['stokesV_err','f4',[0,np.inf],np.nan,'Jy','stat.error;phot.flux.density;phys.polarization.stokes.U'],
-            ['beam_maj','f4',[0,np.inf],np.nan,'deg','pos.angResolution;instr.beam;phys.angSize.smajAxis'],
-            ['beam_min','f4',[0,np.inf],np.nan,'deg','pos.angResolution;instr.beam;phys.angSize.sminAxis'],
-            ['beam_pa','f4',[0,180],np.nan,'deg','pos.angResolution;instr.beam;pos.posAng'],
-            ['reffreq_beam','f4',[0,np.inf],np.nan,'Hz','em.freq;instr.beam'],
-            ['minfreq','f4',[0,np.inf],np.nan,'Hz','em.freq;stat.min'],
-            ['maxfreq','f4',[0,np.inf],np.nan,'Hz','em.freq;stat.max'],
-            ['channelwidth','f4',[0,np.inf],np.nan,'Hz','em.freq;instr.bandwidth'],
-            ['Nchan','i4',[0,np.inf],-2147483648,'','meta.number'],
-            ['rmsf_fwhm','f4',[0,np.inf],np.nan,'rad.m-2','instr.rmsf;stat.fwhm'],
-            ['noise_chan','f4',[0,np.inf],np.nan,'Jy','stat.error;instr.det.noise'],
-            ['telescope','U80','','Unknown','','instr.tel'],
-            ['int_time','f4',[0,np.inf],np.nan,'s','time.duration;obs.exposure'],
-            ['epoch','f4',[-np.inf,np.inf],np.nan,'day','time.epoch'],
-            ['interval','f4',[0,np.inf],np.nan,'day','time.interval'],
-            ['leakage','f4',[0,np.inf],np.nan,'','phys.polarization.linear'],
-            ['beamdist','f4',[0,np.inf],np.nan,'deg','pos.angDistance;instr.beam'],
-            ['catalog','U40','',None,'','meta.note'],
-            ['dataref','U400','','','','meta.bib.bibcode'],
-            ['cat_id','U40','','','','meta.id'],
-            ['type','U40','','','','src.class'],
-            ['notes','U200','','','','meta.note']        ]
+            ['ra','f8',[0,360],None,'deg'],
+            ['dec','f8',[-90,90],None,'deg'],
+            ['l','f8',[0,360],None,'deg'],
+            ['b','f8',[-90,90],None,'deg'],
+            ['pos_err','f4',[0,np.inf],np.nan,'deg'],
+            ['rm','f4',[-np.inf,np.inf],np.nan,'rad.m-2'],
+            ['rm_err','f4',[0,np.inf],np.nan,'rad.m-2'],
+            ['rm_width','f4',[0,np.inf],np.nan,'rad.m-2'],
+            ['rm_width_err','f4',[0,np.inf],np.nan,'rad.m-2'],
+            ['complex_flag','U1','','U','',],
+            ['complex_test','U80','','','',],
+            ['rm_method','U40','','Unknown','',],
+            ['ionosphere','U40','','Unknown',''],
+            ['Ncomp','i4',[1,np.inf],1,''],
+            ['stokesI','f4',[0,np.inf],np.nan,'Jy'],
+            ['stokesI_err','f4',[0,np.inf],np.nan,'Jy'],
+            ['spectral_index','f4',[-np.inf,np.inf],np.nan,''],
+            ['spectral_index_err','f4',[0,np.inf],np.nan,''],
+            ['reffreq_I','f4',[-np.inf,np.inf],np.nan,'Hz'],
+            ['polint','f4',[0,np.inf],np.nan,'Jy'],
+            ['polint_err','f4',[0,np.inf],np.nan,'Jy'],
+            ['pol_bias','U40','','Unknown',''],
+            ['flux_type','U40','','Unknown',''],
+            ['aperture','f4',[0,np.inf],np.nan,'deg'],
+            ['fracpol','f4',[0,np.inf],np.nan,''],
+            ['fracpol_err','f4',[0,np.inf],np.nan,''],
+            ['polangle','f4',[0,180],np.nan,'deg'],
+            ['polangle_err','f4',[0,np.inf],np.nan,'deg'],
+            ['reffreq_pol','f4',[0,np.inf],np.nan,'Hz'],
+            ['stokesQ','f4',[-np.inf,np.inf],np.nan,'Jy'],
+            ['stokesQ_err','f4',[0,np.inf],np.nan,'Jy'],
+            ['stokesU','f4',[-np.inf,np.inf],np.nan,'Jy'],
+            ['stokesU_err','f4',[0,np.inf],np.nan,'Jy'],
+            ['derot_polangle','f4',[0,180],np.nan,'deg'],
+            ['derot_polangle_err','f4',[0,np.inf],np.nan,'deg'],
+            ['stokesV','f4',[-np.inf,np.inf],np.nan,'Jy'],
+            ['stokesV_err','f4',[0,np.inf],np.nan,'Jy'],
+            ['beam_maj','f4',[0,np.inf],np.nan,'deg'],
+            ['beam_min','f4',[0,np.inf],np.nan,'deg'],
+            ['beam_pa','f4',[0,180],np.nan,'deg'],
+            ['reffreq_beam','f4',[0,np.inf],np.nan,'Hz'],
+            ['minfreq','f4',[0,np.inf],np.nan,'Hz'],
+            ['maxfreq','f4',[0,np.inf],np.nan,'Hz'],
+            ['channelwidth','f4',[0,np.inf],np.nan,'Hz'],
+            ['Nchan','i4',[0,np.inf],-2147483648,''],
+            ['rmsf_fwhm','f4',[0,np.inf],np.nan,'rad.m-2'],
+            ['noise_chan','f4',[0,np.inf],np.nan,'Jy'],
+            ['telescope','U80','','Unknown',''],
+            ['int_time','f4',[0,np.inf],np.nan,'s'],
+            ['epoch','f4',[-np.inf,np.inf],np.nan,'day'],
+            ['interval','f4',[0,np.inf],np.nan,'day'],
+            ['leakage','f4',[0,np.inf],np.nan,''],
+            ['beamdist','f4',[0,np.inf],np.nan,'deg'],
+            ['catalog','U40','',None,''],
+            ['dataref','U400','','',''],
+            ['cat_id','U40','','',''],
+            ['type','U40','','',''],
+            ['notes','U200','','','']        ]
         
         self.standard_columns=[x[0] for x in standard]
         self.standard_dtypes=[x[1] for x in standard]
         self.standard_limits=[x[2] for x in standard]
         self.standard_blanks=[x[3] for x in standard]
-        self.standard_units=[x[4] for x in standard]
-        self.standard_ucds=[x[5] for x in standard]
-        
+        self.standard_units={x[0]:x[4] for x in standard}
+        #The units are held as a dictionary in order to make it easier
+        #to enforce strict matching to columns. In retrospect, that might
+        #have been the best approach for the other parameters as well...
         
         self.table=at.Table(names=self.standard_columns,
                             dtype=self.standard_dtypes,
-                            units=self.standard_units)
+                            units=list(self.standard_units.values()))
         self.table.meta['VERSION']=version
         
         #These are for when extra columns might be added.
@@ -100,7 +101,6 @@ class RMTable:
         self.dtype=[x[1] for x in self.table.dtype.descr]
         self.colcount=len(self.columns)
         self.units=self.standard_units.copy()
-        self.ucds=self.standard_ucds.copy()
         
         self.size=0
     
@@ -135,15 +135,22 @@ class RMTable:
     def update_details(self):
         """Updates the 'actual' properties, which describe the columns present
         in the table, even if different from the standard.
+        If units are missing, they are set to either the standard default (if
+           standard columns) or blank (if non-standard).
         """
         self.columns=self.table.dtype.names
         self.dtype=[x[1] for x in self.table.dtype.descr]
         self.colcount=len(self.columns)
         self.size=len(self.table)
+        
         if len(self.units) != self.colcount:
-            print('Something has gone wrong! Length of units list does not match number of columns.')
-        if len(self.ucds) != self.colcount:
-            print('Something has gone wrong! Length of UCDs list does not match number of columns.')
+            for col in self.columns:
+                if col in self.standard_columns:
+                    self.units[col]=self.standard_units[col]
+                else:
+                    self.units[col]=''
+            
+
 
     
     def copy(self):
@@ -153,7 +160,6 @@ class RMTable:
         newtable=RMTable()
         newtable.table=self.table.copy()
         newtable.units=self.units.copy()
-        newtable.ucds=self.ucds.copy()
         newtable.update_details()
         return newtable
     
@@ -161,18 +167,19 @@ class RMTable:
         """Write RMtable to FITS table format. Takes filename as input parameter.
         Can optionally supply boolean overwrite parameter."""
         self.table.write(filename,overwrite=overwrite)
-        #Should I store the UCDs? It seems that units are automatically stored.
+
 
     def read_FITS(self,filename):
         """Read in a FITS RMtable to this RMtable. Takes filename as input parameter. Overwrites current table entries.
         Does not confirm adherence to the standard: reads in as-is."""
         self.table=at.Table.read(filename)
         self.update_details()
+    
         
     def write_tsv(self,filename):
         """Write RMtable to ASCII tsv table format. Takes filename as input parameter. 
         Will automatically overwrite an existing file.
-        Note that TSV format does not preserve units or UCD information."""
+        Note that TSV format does not preserve units information."""
         #Check if string columns are internally represented as bytes or strings.
         #This causes no end of trouble since the replace functions need to have
         # maching types, and astropy.Table isn't fussy enough to be consistent.
@@ -199,14 +206,13 @@ class RMTable:
             for i in range(len(self.table)):
                 f.write(row_string.format(*self.table[i]))
     
-        #Should I add units/UCDs?
     
         
     def read_tsv(self,filename):
         """Read in a ASCII tsv RMtable to this RMtable object. Takes filename as input parameter. 
         Overwrites existing table if present.
         Input: filename (str): path to .tsv file.
-        Note that TSV format does not preserve units or UCD information.
+        Note that TSV format does not preserve units information for non-standard columns.
         """
         #Read in table (generically)
         table=np.genfromtxt(filename,dtype=None,names=True,delimiter='\t',encoding=None)
@@ -236,9 +242,6 @@ class RMTable:
         VOtable=vot.from_table(self.table)
         VOtable.description='RMTable'
         VOtable.coordinate_systems.append(vot.tree.CooSys(ID='equatorial_coordinates',system='ICRS',epoch='J2000.0'))
-        tab=VOtable.get_first_table()
-        for i,field in enumerate(tab.fields):
-                field.ucd=self.ucds[i]
         VOtable.to_xml(filename)
 
 
@@ -251,7 +254,6 @@ class RMTable:
         readin=vot.parse(filename)
         table=readin.get_first_table()
         self.table=table.to_table()
-        self.ucds=[y.ucd for y in table.fields] 
         self.units=[y.unit.to_string('vounit') if y.unit is not None else '' for y in table.fields]
         #The previous line is a bit messy to account for cases because columns
         #without units are given None rather than a blank string.
@@ -388,7 +390,6 @@ class RMTable:
             subtable=RMTable()
             subtable.table=value
             subtable.units=self.units.copy()
-            subtable.ucds=self.ucds.copy()
             subtable.update_details()
             value=subtable
         return value
@@ -496,7 +497,7 @@ class RMTable:
         self.size=len(self.table)
         self.update_details()
         
-    def add_column(self,data,name,units='',ucd=''):
+    def add_column(self,data,name,units=''):
         """Add a new column to a table.
         Inputs: data (list- or array-like): column data. 
                         (Also accepts scalars, which are repeated to all rows)
@@ -504,12 +505,9 @@ class RMTable:
                 units (str,optional): unit for column data (preferably in format
                         compatible with VOUnits standard, 
                         https://www.ivoa.net/documents/latest/VOUnits.html)
-                ucd (str, optional): Unified Content Descriptor (UCD) for column
-                        (https://www.ivoa.net/documents/UCD1+/20210616/index.html)
         """
         self.table.add_column(at.Column(data=data,name=name,unit=units))
-        self.units.append(units)
-        self.ucds.append(ucd)
+        self.units[name]=units
         self.update_details()
 
         
@@ -526,7 +524,7 @@ class RMTable:
             self.table.add_column(at.Column(data=self.standard_blanks[i],
                                             name=column,
                                             dtype=self.standard_dtypes[i],
-                                            unit=self.standard_units[i]))
+                                            unit=self.standard_units[column]))
         self.update_details()
 
         
@@ -539,8 +537,7 @@ class RMTable:
             raise Exception('Cannot remove default column {}'.format(name))
         idx=self.columns.index(name)
         self.table.remove_column(name)
-        del self.units[idx]
-        del self.ucds[idx]
+        del self.units[name]
         self.update_details()
 
 
