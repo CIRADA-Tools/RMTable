@@ -61,6 +61,7 @@
 
 1.0.0:
     Created VOTable version of catalog.
-    FITS version of catalog now contains UCD information.
     No changes to contents of catalog.
     Updating to version 1 in anticipation of no further major changes before publication.
+    Changed values:
+        Rossetti 2008: 'flux_type' changed from 'Gaussian fit' to  'Gaussian fit - Peak' to match standard string.

@@ -3,6 +3,7 @@ import astropy.table as at
 import astropy.coordinates as ac
 import astropy.units as au
 import astropy.io.votable as vot
+import astropy.io.fits as pf
 
 
 """
@@ -113,12 +114,13 @@ class RMTable:
                          'Unknown']
     standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G',
                        '1986ApJ...302..306K','Unknown','None','Not described']
-    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WSRT','Effelsberg',
-                        'ATA','ASKAP','Unknown']
-    standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy','High-redshift radio galaxy','FRB']
+    standard_telescope=['VLA','JVLA','LOFAR','ATCA','DRAO-ST','MWA','WSRT','Effelsberg',
+                        'ATA','ASKAP','ARO','Unknown']
+    standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy',
+                             'High-redshift radio galaxy','FRB','Unknown']
     standard_flux_type=['Unknown','Integrated','Peak','Box','Visibilities','Gaussian fit - Peak']
-    standard_complexity_test=['Unknown','None','Sigma_add','Second moment',
-                              'QU-fitting']
+    standard_complexity_test=['',',Unknown','None','Sigma_add','Second moment',
+                              'QU-fitting','Inspection','QU-fit & BIC']
 
     def __repr__(self):
         return self.table.__repr__()
@@ -172,7 +174,9 @@ class RMTable:
     def read_FITS(self,filename):
         """Read in a FITS RMtable to this RMtable. Takes filename as input parameter. Overwrites current table entries.
         Does not confirm adherence to the standard: reads in as-is."""
-        self.table=at.Table.read(filename)
+        #Have to use pyfits instead of the built-in at.Table() FITS reader,
+        #because the built-in creates masked columns that don't behave as expected.
+        self.table=at.Table(pf.getdata(filename))
         self.update_details()
     
         
@@ -404,7 +408,7 @@ class RMTable:
             missing_columns=[ column for column in self.standard_columns if column not in self.columns ]
             print('Extra columns: ',end='')
             print(extra_columns)
-            print('Missing colunns: ',end='')
+            print('Missing columns: ',end='')
             print(missing_columns)
             #print(set(self.table.colnames).symmetric_difference(set(self.standard_columns)))
     
@@ -475,7 +479,7 @@ class RMTable:
             print(*invalid_flux,sep='\n')
             
         invalid_complexity_test=[]
-        for entry in self.table['flux_type']:
+        for entry in self.table['complex_test']:
             if (entry not in self.standard_complexity_test) and (entry not in invalid_complexity_test):
                 invalid_complexity_test.append(entry)
         if len(invalid_complexity_test) > 0:
