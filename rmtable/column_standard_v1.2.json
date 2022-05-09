@@ -6,7 +6,8 @@
             360
         ],
         "blank": null,
-        "units": "deg"
+        "units": "deg",
+        "ucd": "pos.eq.ra;meta.main"
     },
     "dec": {
         "dtype": "f8",
@@ -15,7 +16,8 @@
             90
         ],
         "blank": null,
-        "units": "deg"
+        "units": "deg",
+        "ucd": "pos.eq.dec;meta.main"
     },
     "l": {
         "dtype": "f8",
@@ -24,7 +26,8 @@
             360
         ],
         "blank": null,
-        "units": "deg"
+        "units": "deg",
+        "ucd": "pos.galactic.lon"
     },
     "b": {
         "dtype": "f8",
@@ -33,7 +36,8 @@
             90
         ],
         "blank": null,
-        "units": "deg"
+        "units": "deg",
+        "ucd": "pos.galactic.lat"
     },
     "pos_err": {
         "dtype": "f4",
@@ -41,14 +45,16 @@
             0, Infinity
         ],
         "blank": NaN,
-        "units": "deg"
+        "units": "deg",
+        "ucd": "pos.eq;stat.error"
     },
     "rm": {
         "dtype": "f4",
         "limits": [-Infinity, Infinity
         ],
         "blank": NaN,
-        "units": "rad.m-2"
+        "units": "rad.m-2",
+        "ucd": "phys.polarization.rotMeasure;meta.main"
     },
     "rm_err": {
         "dtype": "f4",
@@ -56,7 +62,8 @@
             0, Infinity
         ],
         "blank": NaN,
-        "units": "rad.m-2"
+        "units": "rad.m-2",
+        "ucd": "phys.polarization.rotMeasure;stat.error"
     },
     "rm_width": {
         "dtype": "f4",
@@ -78,7 +85,8 @@
         "dtype": "U1",
         "limits": "",
         "blank": "U",
-        "units": ""
+        "units": "",
+        "ucd": "phys.polarization.rotMeasure;meta.code.qual"
     },
     "complex_test": {
         "dtype": "U80",
