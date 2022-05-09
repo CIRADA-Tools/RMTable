@@ -6,10 +6,10 @@ import astropy.io.votable as vot
 import astropy.io.fits as pf
 import json
 try:
-  import importlib.resources as importlib_resources
+    import importlib.resources as importlib_resources
 except ImportError:
-  # In PY<3.7 fall-back to backported `importlib_resources`.
-  import importlib_resources
+    # In PY<3.7 fall-back to backported `importlib_resources`.
+    import importlib_resources
 
 
 # TODO chose format for standard def
@@ -35,25 +35,19 @@ class RMTable:
         # standard_columns_file = pkg_resources.resource_filename(
         #     "standard_data", f"column_standard_v{version}.yaml"
         # )
-        data_pkg = 'rmtable'
-        fname =  f"column_standard_v{version}.json"
+        data_pkg = "rmtable"
+        fname = f"column_standard_v{version}.json"
         with importlib_resources.open_text(data_pkg, fname) as f:
-            standard=json.load(f)
+            standard = json.load(f)
         assert standard.pop("version") == version, "Version number mismatch"
 
         self.standard_columns = list(standard.keys())
-        self.standard_dtypes = [
-            standard[col]["dtype"] for col in self.standard_columns
-        ]
+        self.standard_dtypes = [standard[col]["dtype"] for col in self.standard_columns]
         self.standard_limits = [
             standard[col]["limits"] for col in self.standard_columns
         ]
-        self.standard_blanks = [
-            standard[col]["blank"] for col in self.standard_columns
-        ]
-        self.standard_units = [
-            standard[col]["units"] for col in self.standard_columns
-        ]
+        self.standard_blanks = [standard[col]["blank"] for col in self.standard_columns]
+        self.standard_units = [standard[col]["units"] for col in self.standard_columns]
 
         self.table = at.Table(
             names=self.standard_columns,
@@ -72,70 +66,18 @@ class RMTable:
         self.size = 0
 
     # Define standard entries for strings:
-    standard_rm_method = [
-        "EVPA-linear fit",
-        "RM Synthesis - Pol. Int",
-        "RM Synthesis - Fractional polarization",
-        "RM Synthesis",
-        "QUfit",
-        "QUfit - Delta function",
-        "QUfit - Gaussian x Burn Slab",
-        "QUfit - Burn slab",
-        "QUfit - Gaussian",
-        "QUfit - Multiple",
-        "Unknown",
-    ]
-    standard_pol_bias = [
-        "1974ApJ...194..249W",
-        "1985A&A...142..100S",
-        "2012PASA...29..214G",
-        "1986ApJ...302..306K",
-        "Unknown",
-        "None",
-        "Not described",
-    ]
-    standard_telescope = [
-        "VLA",
-        "JVLA",
-        "LOFAR",
-        "ATCA",
-        "DRAO-ST",
-        "MWA",
-        "WSRT",
-        "Effelsberg",
-        "ATA",
-        "ASKAP",
-        "ARO",
-        "Unknown",
-    ]
-    standard_classification = [
-        "",
-        "Pulsar",
-        "FRII hotspot",
-        "AGN",
-        "Radio galaxy",
-        "High-redshift radio galaxy",
-        "FRB",
-        "Unknown",
-    ]
-    standard_flux_type = [
-        "Unknown",
-        "Integrated",
-        "Peak",
-        "Box",
-        "Visibilities",
-        "Gaussian fit - Peak",
-    ]
-    standard_complexity_test = [
-        "",
-        ",Unknown",
-        "None",
-        "Sigma_add",
-        "Second moment",
-        "QU-fitting",
-        "Inspection",
-        "QU-fit & BIC",
-    ]
+    data_pkg = "rmtable"
+    fname = f"entries_standard_v{__version__}.json"
+    with importlib_resources.open_text(data_pkg, fname) as f:
+        entries = json.load(f)
+    assert entries.pop("version") == __version__, "Version number mismatch"
+
+    standard_rm_method = entries["rm_method"]
+    standard_pol_bias = entries["pol_bias"]
+    standard_telescope = entries["telescope"]
+    standard_classification = entries["classification"]
+    standard_flux_type = entries["flux_type"]
+    standard_complexity_test = entries["complexity_test"]
 
     def __repr__(self):
         return self.table.__repr__()
