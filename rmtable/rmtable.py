@@ -66,9 +66,10 @@ class RMTable:
         self.size = 0
 
     # Define standard entries for strings:
-    data_pkg = "rmtable"
-    fname = f"entries_standard_v{__version__}.json"
-    with importlib_resources.open_text(data_pkg, fname) as f:
+    with importlib_resources.open_text(
+        "rmtable", 
+        f"entries_standard_v{__version__}.json"
+    ) as f:
         entries = json.load(f)
     assert entries.pop("version") == __version__, "Version number mismatch"
 
