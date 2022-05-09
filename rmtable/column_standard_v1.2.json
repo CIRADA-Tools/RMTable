@@ -1,0 +1,443 @@
+{
+    "ra": {
+        "dtype": "f8",
+        "limits": [
+            0,
+            360
+        ],
+        "blank": null,
+        "units": "deg"
+    },
+    "dec": {
+        "dtype": "f8",
+        "limits": [
+            -90,
+            90
+        ],
+        "blank": null,
+        "units": "deg"
+    },
+    "l": {
+        "dtype": "f8",
+        "limits": [
+            0,
+            360
+        ],
+        "blank": null,
+        "units": "deg"
+    },
+    "b": {
+        "dtype": "f8",
+        "limits": [
+            -90,
+            90
+        ],
+        "blank": null,
+        "units": "deg"
+    },
+    "pos_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "rm": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2"
+    },
+    "rm_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2"
+    },
+    "rm_width": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2"
+    },
+    "rm_width_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2"
+    },
+    "complex_flag": {
+        "dtype": "U1",
+        "limits": "",
+        "blank": "U",
+        "units": ""
+    },
+    "complex_test": {
+        "dtype": "U80",
+        "limits": "",
+        "blank": "",
+        "units": ""
+    },
+    "rm_method": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": ""
+    },
+    "ionosphere": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": ""
+    },
+    "Ncomp": {
+        "dtype": "i4",
+        "limits": [
+            1, Infinity
+        ],
+        "blank": 1,
+        "units": ""
+    },
+    "stokesI": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "stokesI_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "spectral_index": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": ""
+    },
+    "spectral_index_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": ""
+    },
+    "reffreq_I": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz"
+    },
+    "polint": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "polint_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "pol_bias": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": ""
+    },
+    "flux_type": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": ""
+    },
+    "aperture": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "fracpol": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": ""
+    },
+    "fracpol_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": ""
+    },
+    "polangle": {
+        "dtype": "f4",
+        "limits": [
+            0,
+            180
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "polangle_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "reffreq_pol": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz"
+    },
+    "stokesQ": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "stokesQ_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "stokesU": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "stokesU_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "derot_polangle": {
+        "dtype": "f4",
+        "limits": [
+            0,
+            180
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "derot_polangle_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "stokesV": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "stokesV_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "beam_maj": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "beam_min": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "beam_pa": {
+        "dtype": "f4",
+        "limits": [
+            0,
+            180
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "reffreq_beam": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz"
+    },
+    "minfreq": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz"
+    },
+    "maxfreq": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz"
+    },
+    "channelwidth": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz"
+    },
+    "Nchan": {
+        "dtype": "i4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": -2147483648,
+        "units": ""
+    },
+    "rmsf_fwhm": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2"
+    },
+    "noise_chan": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy"
+    },
+    "telescope": {
+        "dtype": "U80",
+        "limits": "",
+        "blank": "Unknown",
+        "units": ""
+    },
+    "int_time": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "s"
+    },
+    "epoch": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "day"
+    },
+    "interval": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "day"
+    },
+    "leakage": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": ""
+    },
+    "beamdist": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg"
+    },
+    "catalog": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": null,
+        "units": ""
+    },
+    "dataref": {
+        "dtype": "U400",
+        "limits": "",
+        "blank": "",
+        "units": ""
+    },
+    "cat_id": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "",
+        "units": ""
+    },
+    "type": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "",
+        "units": ""
+    },
+    "notes": {
+        "dtype": "U200",
+        "limits": "",
+        "blank": "",
+        "units": ""
+    },
+    "version": "1.2"
+}
