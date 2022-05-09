@@ -2,6 +2,7 @@ import io
 import os
 import sys
 from shutil import rmtree
+from glob import glob
 
 from setuptools import find_packages, setup, Command
 
@@ -9,7 +10,7 @@ NAME = 'RMTable'
 DESCRIPTION = 'Reading, writing, and manipulating RMTables (radio astronomy Faraday rotation catalogs)'
 URL = 'https://github.com/CIRADA-Tools/RMTable'
 REQUIRES_PYTHON = '>=3.5.0'
-VERSION = '1.1.0'
+VERSION = '1.2.0'
 
 REQUIRED = [
     'numpy', 'astropy',
@@ -32,9 +33,10 @@ setup(
     long_description_content_type='text/markdown',
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    py_modules=['rmtable'],
-    install_requires=REQUIRED,
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     include_package_data=True,
+    package_data={'rmtable': [os.path.basename(i) for i in glob('rmtable/*.json')]},
+    install_requires=REQUIRED,
     license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
