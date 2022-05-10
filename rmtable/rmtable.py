@@ -25,6 +25,21 @@ https://docs.google.com/document/d/1lo-W89G1X7xGoMOPHYS5japxJKPDamjEJ9uIGnRPnpo/
 
 __version__ = "1.2"
 
+# Reading in standard here so they are read on import
+# rather than on first use.
+with importlib_resources.open_text(
+    "rmtable", 
+    f"column_standard_v{__version__}.json"
+) as f:
+    __standard__ = json.load(f)
+assert __standard__.pop("version") == __version__, "Version number mismatch"
+    # Define standard entries for strings:
+with importlib_resources.open_text(
+    "rmtable", 
+    f"entries_standard_v{__version__}.json"
+) as f:
+    __entries__ = json.load(f)
+assert __entries__.pop("version") == __version__, "Version number mismatch"
 
 class RMTable:
     """A class for holding tables of RMs and associated columns.
@@ -35,21 +50,16 @@ class RMTable:
         # standard_columns_file = pkg_resources.resource_filename(
         #     "standard_data", f"column_standard_v{version}.yaml"
         # )
-        data_pkg = "rmtable"
-        fname = f"column_standard_v{version}.json"
-        with importlib_resources.open_text(data_pkg, fname) as f:
-            standard = json.load(f)
-        assert standard.pop("version") == version, "Version number mismatch"
 
-        self.standard = standard
-        self.standard_columns = list(standard.keys())
-        self.standard_dtypes = [standard[col]["dtype"] for col in self.standard_columns]
+        self.standard = __standard__
+        self.standard_columns = list(self.standard.keys())
+        self.standard_dtypes = [self.standard[col]["dtype"] for col in self.standard_columns]
         self.standard_limits = [
-            standard[col]["limits"] for col in self.standard_columns
+            self.standard[col]["limits"] for col in self.standard_columns
         ]
-        self.standard_blanks = [standard[col]["blank"] for col in self.standard_columns]
-        self.standard_units = [standard[col]["units"] for col in self.standard_columns]
-        self.standard_ucds = [standard[col]["ucd"] for col in self.standard_columns]
+        self.standard_blanks = [self.standard[col]["blank"] for col in self.standard_columns]
+        self.standard_units = [self.standard[col]["units"] for col in self.standard_columns]
+        self.standard_ucds = [self.standard[col]["ucd"] for col in self.standard_columns]
 
         self.table = at.Table(
             names=self.standard_columns,
@@ -59,7 +69,7 @@ class RMTable:
         self.table.meta["VERSION"] = version
         # Add ucds to meta of each column
         for col in self.standard_columns:
-            self.table[col].meta["ucd"] = standard[col]["ucd"] 
+            self.table[col].meta["ucd"] = self.standard[col]["ucd"] 
 
         # These are for when extra columns might be added.
         # They point into the table where the columns can be found.
@@ -71,14 +81,7 @@ class RMTable:
 
         self.size = 0
 
-    # Define standard entries for strings:
-    with importlib_resources.open_text(
-        "rmtable", 
-        f"entries_standard_v{__version__}.json"
-    ) as f:
-        entries = json.load(f)
-    assert entries.pop("version") == __version__, "Version number mismatch"
-
+    entries = __entries__
     standard_rm_method = entries["rm_method"]
     standard_pol_bias = entries["pol_bias"]
     standard_telescope = entries["telescope"]
