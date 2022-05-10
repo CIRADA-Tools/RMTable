@@ -13,7 +13,7 @@ import rmtable as RMT
 
 
 #Reading in an RMTable from FITS:
-catalog=RMT.read_FITS('VanEck2011_table.fits')
+catalog=RMT.read_FITS('individual_catalogs/VanEck2011_table.fits')
 print(catalog)
 
 #Get the list of columns present in table:
@@ -57,7 +57,7 @@ subcatalog.write_FITS('subcatalog.fits',overwrite=True)
 #keyword. Columns that match the standard are given names in the standard, 
 #to allow direct conversion; other columns must avoid name conflicts with
 #standard columns.
-cat=np.genfromtxt('VanEck2011.dat',encoding=None,dtype=None,
+cat=np.genfromtxt('individual_catalogues/VanEck2011.dat',encoding=None,dtype=None,
                   delimiter=[6,6,3,3,5,2,2,3,3,5,4,5,3,5,3,7,5],
                     names=['l','b','rah','ram','ras','dec_sign','decd',
                            'decm','decs','stokesI','polint','rm','rm_err',
