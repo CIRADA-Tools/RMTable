@@ -108,19 +108,25 @@ class RMTable:
     #Define standard entries for strings:
     standard_rm_method=['EVPA-linear fit','RM Synthesis - Pol. Int',
                         'RM Synthesis - Fractional polarization',
-                        'RM Synthesis', 'QUfit', 'QUfit - Delta function',
+                        'RM Synthesis','Faraday Synthesis', 'QUfit', 
+                        'QUfit - Delta function',
                         'QUfit - Gaussian x Burn Slab',
                         'QUfit - Burn slab','QUfit - Gaussian','QUfit - Multiple',
                          'Unknown']
     standard_pol_bias=['1974ApJ...194..249W','1985A&A...142..100S','2012PASA...29..214G',
                        '1986ApJ...302..306K','Unknown','None','Not described']
-    standard_telescope=['VLA','JVLA','LOFAR','ATCA','DRAO-ST','MWA','WSRT','Effelsberg',
-                        'ATA','ASKAP','ARO','Unknown']
+    standard_telescope=['VLA','LOFAR','ATCA','DRAO-ST','MWA','WSRT','Effelsberg',
+                        'ATA','ASKAP','ARO','Arecibo','Parkes','CHIME',
+                        'FAST','Unknown']
     standard_classification=['','Pulsar','FRII hotspot','AGN','Radio galaxy',
                              'High-redshift radio galaxy','FRB','Unknown']
     standard_flux_type=['Unknown','Integrated','Peak','Box','Visibilities','Gaussian fit - Peak']
-    standard_complexity_test=['',',Unknown','None','Sigma_add','Second moment',
-                              'QU-fitting','Inspection','QU-fit & BIC']
+    standard_complexity_test=['','None','Sigma_add','Second moment',
+                              'QU-fitting','Inspection','Machine learning - Alger 2021',
+                              'Convolutional neural networks - Brown 2019',
+                              'QU-fit & BIC']
+    standard_ionosphere=['Unknown','None','RMextract','ionFR','FARAD','ALBUS',
+                         'FRion']
 
     def __repr__(self):
         return self.table.__repr__()
@@ -485,9 +491,16 @@ class RMTable:
         if len(invalid_complexity_test) > 0:
             print('The following non-standard complexity test type(s) were found (at least once each):')
             print(*invalid_complexity_test,sep='\n')
-        
 
-        if len(invalid_methods+invalid_polbias+invalid_telescope+invalid_type+invalid_flux) == 0:
+        invalid_ionosphere=[]
+        for entry in self.table['ionosphere']:
+            if (entry not in self.standard_ionosphere) and (entry not in invalid_ionosphere):
+                invalid_ionosphere.append(entry)
+        if len(invalid_ionosphere) > 0:
+            print('The following non-standard ionosphere correction type(s) were found (at least once each):')
+            print(*invalid_ionosphere,sep='\n')        
+
+        if len(invalid_methods+invalid_polbias+invalid_telescope+invalid_type+invalid_flux+invalid_ionosphere) == 0:
             print('No problems found with standardized string entries.')
             
     def append_to_table(self,table2,join_type='exact'):
