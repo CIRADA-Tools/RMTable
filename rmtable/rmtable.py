@@ -48,6 +48,7 @@ class RMTable:
         ]
         self.standard_blanks = [standard[col]["blank"] for col in self.standard_columns]
         self.standard_units = [standard[col]["units"] for col in self.standard_columns]
+        self.standard_ucds = [standard[col]["ucd"] for col in self.standard_columns]
 
         self.table = at.Table(
             names=self.standard_columns,
@@ -55,6 +56,9 @@ class RMTable:
             units=self.standard_units,
         )
         self.table.meta["VERSION"] = version
+        # Add ucds to meta of each column
+        for col in self.standard_columns:
+            self.table[col].meta["ucd"] = standard[col]["ucd"] 
 
         # These are for when extra columns might be added.
         # They point into the table where the columns can be found.
@@ -62,6 +66,7 @@ class RMTable:
         self.dtype = [x[1] for x in self.table.dtype.descr]
         self.colcount = len(self.columns)
         self.units = self.standard_units.copy()
+        self.ucds = self.standard_ucds.copy()
 
         self.size = 0
 
@@ -117,6 +122,7 @@ class RMTable:
         newtable = RMTable()
         newtable.table = self.table.copy()
         newtable.units = self.units.copy()
+        newtable.ucds = self.ucds.copy()
         newtable.update_details()
         return newtable
 
@@ -206,6 +212,7 @@ class RMTable:
         VOtable.coordinate_systems.append(
             vot.tree.CooSys(ID="equatorial_coordinates", system="ICRS", epoch="J2000.0")
         )
+        tab=VOtable.get_first_table()
         VOtable.to_xml(filename)
 
     def read_VOTable(self, filename):
