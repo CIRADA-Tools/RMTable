@@ -41,6 +41,7 @@ class RMTable:
             standard = json.load(f)
         assert standard.pop("version") == version, "Version number mismatch"
 
+        self.standard = standard
         self.standard_columns = list(standard.keys())
         self.standard_dtypes = [standard[col]["dtype"] for col in self.standard_columns]
         self.standard_limits = [
@@ -109,11 +110,10 @@ class RMTable:
         self.size = len(self.table)
 
         if len(self.units) != self.colcount:
-            for col in self.columns:
-                if col in self.standard_columns:
-                    self.units[col] = self.standard_units[col]
-                else:
-                    self.units[col] = ""
+            self.units = [
+                self.standard[col]["units"] if col in self.standard_columns 
+                else "" for col in self.columns
+            ]
 
     def copy(self):
         """Creates a copy of the table as a new variable, which can be safely
