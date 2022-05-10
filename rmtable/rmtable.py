@@ -108,7 +108,9 @@ class RMTable:
         self.dtype = [x[1] for x in self.table.dtype.descr]
         self.colcount = len(self.columns)
         self.size = len(self.table)
-
+        for col in self.columns:
+            if col in self.standard_columns:
+                self.table[col].meta["ucd"] = self.standard[col]["ucd"] 
         if len(self.units) != self.colcount:
             self.units = [
                 self.standard[col]["units"] if col in self.standard_columns 
