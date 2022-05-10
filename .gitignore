@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 scratch.ipynb
 example/subcatalog.fits
+ucd1p-words.txt
