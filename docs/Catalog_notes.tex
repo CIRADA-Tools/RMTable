@@ -1,0 +1,140 @@
+\documentclass[10pt,modern]{aastex63} 
+
+\usepackage{natbib}
+
+\newcommand{\radu}{rad m$^{-2}$}
+
+
+
+
+\begin{document} 
+%\title{RMTable Standard column definitions}
+ 
+ 
+ \section{Consolidated catalog summary and notes}
+
+In this document we list the catalogs that have been incorporated into the consolidated catalog, and include some notes on any specific changes that had to be made to incorporate each catalog. The bulk of this text has been taken directly from the catalog description paper, Van Eck et al. (submitted), with minimal adaptation.
+
+
+\subsection{Guidelines for catalog usage}
+This consolidated catalog is a very heterogenous data set, and so some care must be exercised when using it. Below we suggest a few considerations that should be made when using values in the catalog:
+\begin{itemize}
+\item Sources may appear in the consolidated catalog multiple times, if they are present in multiple input catalogs, and sources reported with multiple RMs/polarized components will appear as multiple rows in the table. 
+\item A small number of sources (71) have no reported errors in RM, and so may not be suitable for some types of statistical analysis. Some sources have very small errors in RM (which may or may not be justified, depending on the frequencies used in the RM determination), and one source has an RM error of exactly zero.
+\item Stokes $I, Q, U$, and $V$ values cannot be directly compared between catalogs, as they will generally have different reference frequencies (which may not be known for some catalogs). For sources with reported spectral indices and reference frequencies it may be possible to estimate the Stokes $I$ values at different frequencies, but this is a small fraction of the catalog. Some sources may be variable in time, leading to different values for the same source between catalogs at different epochs.
+\item Only a small number of RMs (848) have been corrected for ionospheric Faraday rotation. Most have either no correction (11 515) or are not known whether they are corrected or not (43 456), so these may have some unknown contributions from the ionosphere which may act as systematic errors within each catalog.
+\item No quality assessment or vetting of values in the original catalogs has been performed, beyond requiring that the catalogs appear in published papers. Sources with unphysical parameters (e.g., negative Stokes I, fractional polarization greater than 100\%) have not been removed wherever they are present in the published catalogs.
+\item Matching sources between catalogs is complicated by the different beam sizes of each catalog, which is only recorded for a small subset of catalogs. Also, some very old catalogs used few significant digits for position (as coarse as 0.1\degr), which can lead to apparent position offsets.
+\item Not all RMs are statistically independent, as there have been cases of the same observations being re-processed and having new RMs determined. For example, both \citet{Brown2003} and \citet{VanEck2021} used the same observations, and \citet{Rossetti2008} included the data from \citet{Klein2003} with newer observations to re-determine the RMs.
+\item Measurements of Faraday complexity, where present, are strongly dependent on the range of observed frequencies as to how sensitive they are to different levels of Faraday thickness/complexity \citep{Anderson2016}. Sources that appear Faraday simple/complex in one observation may not be the same in observations with different $\lambda^2$ coverage.
+\end{itemize}
+
+Users of the consolidated catalog may want to filter the catalog to remove sources not suitable for the type of analysis they are performing. Examples of several types of filters based on the considerations listed above are included in the RMTable python package.
+
+In addition, we strongly emphasize the importance of referencing the original RM catalogs when using this consolidated catalog to find sources; citing only the consolidated catalog is not sufficient as it will reduce recognition of the value contributed by each catalog.
+
+
+
+\begin{deluxetable*}{rrl}
+\tablecaption{List of catalogs included in the consolidated catalog, ordered by catalog size.}
+\tablehead{\colhead{Catalog reference} & \colhead{\# of sources} & \colhead{Catalog ID}}
+\tabletypesize{\scriptsize}
+\startdata
+\citet{Taylor09} & 37 543 & 2009ApJ...702.1230T\\
+\citet{Schnitzeler2019} & 6 934 & 2019MNRAS.485.1293S\\
+\citet{VanEck2021} & 2 234 & 2021ApJS..253...48V\\
+\citet{Betti2019} & 1 105 & 2019ApJ...871..215B\\
+\citet{Farnes2014} & 907 & 2014ApJS..212...15F\\
+\citet{Mao2010} & 813 & 2010ApJ...714.1170M\\
+\citet{Tabara1980}$^a$ & 704 & 1980A\&AS...39..379T\\
+\citet{Broten1988}$^{a,b}$ & 672 & 1988Ap\&SS.141..303B\\
+\citet{Simard-Normandin1981} & 555 & 1981ApJS...45...97S\\
+\citet{Riseley2020} & 516 & 2020PASA...37...29R\\
+\citet{Brown2003} & 380 & 2003ApJS..145..213B\\
+\citet{Mao2012LMC} & 305 & 2012ApJ...759...25M\\
+\citet{Mao2012Halo} & 302 & 2012ApJ...755...21M\\
+\citet{Feain2009} & 281 & 2009ApJ...707..114F\\
+\citet{VanEck11} & 194 & 2011ApJ...728...97V\\
+\citet{Ma2020} & 194 & 2020MNRAS.497.3097M\\
+\citet{OSullivan2017}$^c$ & 174 & 2017MNRAS.469.4034O\\
+\citet{Kaczmarek2017} & 167 & 2017MNRAS.467.1776K\\
+\citet{Anderson2015} & 160 & 2015ApJ...815...49A\\
+\citet{Brown07} & 148 & 2007ApJ...663..258B\\
+\citet{Klein2003} & 143 & 2003A\&A...406..579K\\
+\citet{Heald09}$^c$ & 133 & 2009A\&A...503..409H\\
+\citet{Shanahan2019} & 127 & 2019ApJ...887L...7S\\
+\citet{Clarke2001} & 125 & 2001ApJ...547L.111C\\
+\citet{Minter1996}$^b$ & 98 & 1996ApJ...458..194M\\
+\citet{VanEck2018a} & 92 & 2018A\&A...613A..58V\\
+\citet{Law2011} & 90 & 2011ApJ...728...57L\\
+\citet{Riseley2018} & 81 & 2018PASA...35...43R\\
+\citet{Livingston2022} & 80 & 2022MNRAS.510..260L\\
+\citet{Mao2008} & 70 & 2008ApJ...688.1029M\\
+\citet{Roy2005} & 67 & 2005MNRAS.360.1305R\\
+\citet{Livingston2021} & 62 & 2021MNRAS.502.3814L\\
+\citet{Oren1995}$^b$ & 61 & 1995ApJ...445..624O\\
+\citet{Clegg1992}$^b$ & 56 & 1992ApJ...386..143C\\
+\citet{Kim2016} & 49 & 2016ApJ...829..133K\\
+\citet{Battye2011} & 45 & 2011MNRAS.413..132B\\
+\citet{Ma2019} & 35 & 2019MNRAS.487.3432M\\
+\citet{Rossetti2008} & 32 & 2008A\&A...487..865R\\
+\citet{Costa2018} & 27 & 2018ApJ...865...65C\\
+\citet{Vernstrom2018} & 22 & 2018MNRAS.475.1736V\\
+\citet{Gaensler2001} & 21 & 2001ApJ...549..959G\\
+\citet{Costa2016} & 15 & 2016ApJ...821...92C\\
+\hline
+{\bf Total: } & 55 819 &
+\enddata
+\tablecomments{
+a. These papers are older collections of previously published RMs, which we have incorporated directly to avoid the difficulty of finding the many original catalogs (many of which do not exist in machine-readable form).\\
+b. The coordinate and RM data for these catalogs were taken from a machine-readable consolidated catalog compiled by Jo-Anne Brown.\footnote[4]{http://www.ras.ucalgary.ca/~jocat/RMData/}\\
+c. These catalogs presented multiple RMs/polarized components per sources. We have split each component into its own row in the consolidated catalog.}
+\label{tab:papers}
+\end{deluxetable*}
+
+
+Some of the individual catalogs within the consolidated RM catalog required some changes in order to be incorporated, or have some specific details that may influence how users may want to use those RMs. We list those details here, ordered from largest catalog to smallest. Trivial changes, such as converting coordinates from sexagesimal to decimal degrees, unit changes, or including information explicitly given in the paper accompanying each catalog, are not described here.
+
+{\bf \citet{Taylor09}:} The 1D position error was calculated for each source as the larger of the (de-projected) RA error or the declination error.
+
+{\bf \citet{Schnitzeler2019}:} While the authors report fitting up to 5 polarized components per source, the available data table only reports the brightest 2 components per source. These two components have been incorporated into the consolidated catalog (as separate rows), and the number of components column has been capped at two for these sources. The 1D position error was calculated for each source as the larger of the (de-projected) RA error or the declination error. We also note that some sources have questionable values for some columns such as negative Stokes I values or unphysical spectral indices or fractional polarizations; these have been left unchanged.
+
+{\bf \citet{Brown2003, VanEck2021}:} These catalogs used the same data, so RMs present in both catalogs are not independent measurements.
+
+{\bf \citet{Farnes2014}:} The RMs in this catalog were determined using data from multiple sources, some of which were also used to determine RMs. As a result, these RMs are not fully independent measurements of the same sources that are also present in the \citet{Klein2003}, \citet{Rossetti2008}, and \citet{Taylor09} catalogs. To incorporate this catalog we constructed a look-up table to work out which data references, telescopes, and frequencies were used for each source.
+
+{\bf \citet{Tabara1980}:} This catalog is a collection of published RMs up to December 1978. The process of determining the original publication on a per-RM basis was deemed too difficult to be done when incorporating this catalog into the consolidated catalog.
+
+{\bf \citet{Broten1988}:} This catalog is a collection of published RMs from 10 separate papers published from 1975 to 1988. As best as we can determine, there is no duplication of entries with \citet{Tabara1980}. As above, finding the original publication for each source was deemed too difficult. No direct machine-readable version of this table was found online, so the RMs were incorporated from a table compiled by Jo-Anne Brown. The position of each RM is precise to only 0.1\degr\ (in $l$ and $b$) due to the limited significant figures used in this table.
+
+{\bf \citet{Simard-Normandin1981}:} The RMs in this catalog were determined in part using previously published measurements; it is not clear if there is any overlap with the data used for the RMs in the \citet{Tabara1980} and \citet{Broten1988} catalogs. The position of each RM is also limited in precision to 0.1\degr\ due to significant figures.
+
+{\bf \citet{Riseley2018, Riseley2020}:} These catalogs use some of the same data as each other, so sources present in both catalogs may not be fully independent measurements.
+
+{\bf \citet{OSullivan2017}:} The {\it Vizier} version of this catalog does not include the measured RMs; the RM values were extracted from the paper's LaTeX source available on the arXiv. This catalog reports multiple components for some sources; each component was converted to a separate row in the consolidated catalog. The RM width column was determined by combining the $\sigma_\mathrm{RM}$ and $\Delta_\mathrm{RM}$ columns of the original tables (each component had a value for only one or the other). Sources fit with a Faraday thin model have NaN values for RM width.
+
+{\bf \citet{Klein2003}:} The data these authors used to determine RMs have also been used in other projects \citep{Rossetti2008, Farnes2014}, so these RMs may not be statistically independent.
+
+{\bf \citet{Heald09}:} Some of the sources in this catalog are resolved and have RMs determined for different (spatially-separated) components, but the catalog does not provide coordinates for each component. In these cases, all the components have been given the same coordinate.
+
+{\bf \citet{Clarke2001}:} The RM values are not available online, but were supplied by the author.
+
+{\bf \citet{Clegg1992, Oren1995, Minter1996}:} No online machine-readable version of these catalogs were found; these RMs were taken from a table assembled by Jo-Anne Brown. The position of each RM is limited in precision to 0.1\degr\ due to significant figures.
+
+{\bf \citet{Battye2011}:} The source positions are based on short names, resulting in a position accuracy limited to approximately 0.1\degr.
+
+{\bf \citet{Costa2018}:} The authors supplied RMs calculated from two different methods; we have used the EVPA linear fitting method values for the RM column in the consolidated catalog.
+
+
+
+
+
+% \clearpage
+
+\bibliography{References}{} % your references Yourfile.bib
+\bibliographystyle{aasjournal} % style aa.bst 
+
+
+
+
+\end{document}  
