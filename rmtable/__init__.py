@@ -1,1 +1,1 @@
-from .rmtable import RMTable
+from .rmtable import *
