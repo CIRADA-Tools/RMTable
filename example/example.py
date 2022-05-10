@@ -10,10 +10,11 @@ Created on Fri Apr 26 09:42:09 2019
 
 import numpy as np
 import rmtable as RMT
+from astropy.coordinates import SkyCoord
 
 
 #Reading in an RMTable from FITS:
-catalog=RMT.read_FITS('individual_catalogs/VanEck2011_table.fits')
+catalog=RMT.read_FITS('VanEck2011_table.fits')
 print(catalog)
 
 #Get the list of columns present in table:
@@ -57,7 +58,7 @@ subcatalog.write_FITS('subcatalog.fits',overwrite=True)
 #keyword. Columns that match the standard are given names in the standard, 
 #to allow direct conversion; other columns must avoid name conflicts with
 #standard columns.
-cat=np.genfromtxt('individual_catalogues/VanEck2011.dat',encoding=None,dtype=None,
+cat=np.genfromtxt('VanEck2011.dat',encoding=None,dtype=None,
                   delimiter=[6,6,3,3,5,2,2,3,3,5,4,5,3,5,3,7,5],
                     names=['l','b','rah','ram','ras','dec_sign','decd',
                            'decm','decs','stokesI','polint','rm','rm_err',
@@ -76,7 +77,7 @@ dec_strings=np.char.add(cat['dec_sign'],
                         np.char.add(np.char.add(np.char.add(cat['decd'].astype(str),'d'),
                                                 np.char.add(cat['decm'].astype(str),'m')),
                                                 np.char.add(cat['decs'].astype(str),'s')))
-coords=ac.SkyCoord(ra_strings,dec_strings,frame='fk5')
+coords=SkyCoord(ra_strings,dec_strings,frame='fk5')
 #Adding final decimal coordinate columns in to the numpy table:
 cat=np.lib.recfunctions.append_fields(cat,['ra','dec'],[coords.ra.deg,coords.dec.deg])
 
