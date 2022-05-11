@@ -1,9 +1,7 @@
 import numpy as np
-import astropy.table as at
-import astropy.coordinates as ac
+from astropy.table import Table, Column
+from astropy.coordinates import SkyCoord
 import astropy.units as au
-import astropy.io.votable as vot
-import astropy.io.fits as pf
 import json
 import warnings
 
@@ -42,12 +40,12 @@ with importlib_resources.open_text(
 assert __entries__.pop("version") == __version__, "Version number mismatch"
 
 
-class RMTable(at.Table):
+class RMTable(Table):
     """A class for holding tables of RMs and associated columns.
     Will have associated methods for reading, writing, outputting to various
     types.
     This class inherits from astropy.table.Table. The convenience functions
-    that work with Tables (e.g. astropy.table.vstack) can also be used on 
+    that work with Tables (e.g. astropy.table.vstack) can also be used on
     RMTables.
     """
 
@@ -105,13 +103,13 @@ class RMTable(at.Table):
 
     def read(*args, **kwargs):
         """Reads in a table from a file."""
-        return RMTable(at.Table.read(*args, **kwargs))
+        return RMTable(Table.read(*args, **kwargs))
 
     def verify_limits(self):
-        """This function checks that all numerical columns conform to the 
-        standard for limits on allowed numerical values. Mostly important for 
+        """This function checks that all numerical columns conform to the
+        standard for limits on allowed numerical values. Mostly important for
         angles, as the standard uses [0,180) and not (-90,90].
-        Non-conforming entries should be checked and fixed before incorporation 
+        Non-conforming entries should be checked and fixed before incorporation
         into the master catalog.
         """
         good = True  # Remains true until a non-conforming entry is found.
@@ -127,20 +125,18 @@ class RMTable(at.Table):
             undermin = (data < self.standard_limits[i][0]).sum()
             if overmax + undermin > 0:
                 print(
-                    "Column '{}' has {} entries outside the range of allowed values!".format(
-                        self.standard_columns[i], overmax + undermin
-                    )
+                    f"Column '{self.standard_columns[i]}' has {overmax + undermin} entries outside the range of allowed values!"
                 )
                 good = False
-        if good == True:
+        if good:
             print("All columns conform with standard.")
 
     def verify_standard_strings(self):
-        """This function checks the standardized string columns that they 
-        conform to the currently defined standard options. This is not strictly 
+        """This function checks the standardized string columns that they
+        conform to the currently defined standard options. This is not strictly
         enforced, as the standard options are certainly incomplete.
-        If assembling a catalog, please check that non-conforming values are 
-        not the result of typos, and contact the standard curator to have new 
+        If assembling a catalog, please check that non-conforming values are
+        not the result of typos, and contact the standard curator to have new
         options added to the standard.
         """
         invalid_methods = []
@@ -237,23 +233,23 @@ class RMTable(at.Table):
             if self.standard_blanks[i] == None:
                 warnings.warn(f"Missing essential column: {column}")
             self.add_column(
-                at.Column(
+                Column(
                     data=[self.standard[column]["blank"]] * len(self),
                     name=column,
                     dtype=self.standard[column]["dtype"],
                     unit=self.standard[column]["units"],
-                    meta={"ucd":self.standard[column]["ucd"]},
+                    meta={"ucd": self.standard[column]["ucd"]},
                 )
             )
 
     def to_table(self):
         """Returns the table object."""
-        return at.Table(self)
+        return Table(self)
 
 
 def calculate_missing_coordinates_column(long, lat, to_galactic):
-    """Calculate a new pair of coordinate columns (equatorial/galactic) given 
-    the other pair and specified direction. Assumes input columns are already 
+    """Calculate a new pair of coordinate columns (equatorial/galactic) given
+    the other pair and specified direction. Assumes input columns are already
     in degrees.
     Uses astropy coordinates for the transform.
     Input parameters:
@@ -263,11 +259,11 @@ def calculate_missing_coordinates_column(long, lat, to_galactic):
     Outputs: two arrays, new_long and new_lat
     """
     if to_galactic:
-        sc = ac.SkyCoord(long, lat, frame="icrs", unit=(au.deg, au.deg))
+        sc = SkyCoord(long, lat, frame="icrs", unit=(au.deg, au.deg))
         new_long = sc.galactic.l.deg
         new_lat = sc.galactic.b.deg
     else:
-        sc = ac.SkyCoord(long, lat, frame="galactic", unit=(au.deg, au.deg))
+        sc = SkyCoord(long, lat, frame="galactic", unit=(au.deg, au.deg))
         new_long = sc.icrs.ra.deg
         new_lat = sc.icrs.dec.deg
 
