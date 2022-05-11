@@ -45,15 +45,14 @@ assert __entries__.pop("version") == __version__, "Version number mismatch"
 class RMTable(at.Table):
     """A class for holding tables of RMs and associated columns.
     Will have associated methods for reading, writing, outputting to various
-    types
+    types.
+    This class inherits from astropy.table.Table. The convenience functions
+    that work with Tables (e.g. astropy.table.vstack) can also be used on 
+    RMTables.
     """
 
     def __init__(self, data=None, *args, **kwargs):
         version = __version__
-
-        # standard_columns_file = pkg_resources.resource_filename(
-        #     "standard_data", f"column_standard_v{version}.yaml"
-        # )
 
         self.standard = __standard__
         self.standard_columns = list(self.standard.keys())
