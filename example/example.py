@@ -119,12 +119,12 @@ table['int_time']=120
 
 #The following lines check the table values for conformance with the standard
 # (within limits, and using standard string values where applicable).
+# Note that these methods are always run automatically, but can be run manually
 table.verify_limits()
 table.verify_standard_strings()
 
 
-#Step 5: Save the RMTable. Available formats are FITS and tsv. CSV is not allowed
-#   in case any string contain commas.
+#Step 5: Save the RMTable. All formats supported by astropy are supported.
 table.write('VanEck2011_table.fits',overwrite=True)
 
 
