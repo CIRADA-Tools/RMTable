@@ -5,6 +5,7 @@ import astropy.units as au
 import astropy.io.votable as vot
 import astropy.io.fits as pf
 import json
+import warnings
 
 try:
     import importlib.resources as importlib_resources
@@ -47,7 +48,7 @@ class RMTable(at.Table):
     types
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, data=None, *args, **kwargs):
         version = __version__
 
         # standard_columns_file = pkg_resources.resource_filename(
@@ -80,8 +81,8 @@ class RMTable(at.Table):
         self.standard_flux_type = self.entries["flux_type"]
         self.standard_complexity_test = self.entries["complexity_test"]
 
-        if len(args) > 0 or len(kwargs) > 0:
-            super().__init__(*args, **kwargs)
+        if data is not None:
+            super().__init__(data=data, *args, **kwargs)
             self.add_missing_columns()
             self.verify_limits()
             self.verify_standard_strings()
@@ -101,6 +102,7 @@ class RMTable(at.Table):
         # They point into the table where the columns can be found.
         self.units = self.standard_units.copy()
         self.ucds = self.standard_ucds.copy()
+        self.size = len(self)
 
     def read(*args, **kwargs):
         """Reads in a table from a file."""
@@ -234,16 +236,20 @@ class RMTable(at.Table):
         for column in missing_columns:
             i = self.standard_columns.index(column)
             if self.standard_blanks[i] == None:
-                raise Exception("Missing essential column: {}".format(column))
+                warnings.warn(f"Missing essential column: {column}")
             self.add_column(
                 at.Column(
-                    data=self.standard[column]["blank"],
+                    data=[self.standard[column]["blank"]] * len(self),
                     name=column,
                     dtype=self.standard[column]["dtype"],
                     unit=self.standard[column]["units"],
-                    meta=self.standard[column]["ucd"],
+                    meta={"ucd":self.standard[column]["ucd"]},
                 )
             )
+
+    def to_table(self):
+        """Returns the table object."""
+        return at.Table(self)
 
 
 def calculate_missing_coordinates_column(long, lat, to_galactic):
