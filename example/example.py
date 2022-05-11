@@ -10,7 +10,6 @@ Created on Fri Apr 26 09:42:09 2019
 
 import numpy as np
 from rmtable import RMTable
-import rmtable as rmt
 from astropy.coordinates import SkyCoord
 
 
