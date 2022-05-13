@@ -1,5 +1,5 @@
 import numpy as np
-from astropy.table import Table, Column
+from astropy.table import Table, Column, MaskedColumn
 from astropy.coordinates import SkyCoord
 import astropy.units as au
 import json
@@ -88,6 +88,7 @@ class RMTable(Table):
         # These are for when extra columns might be added.
         # They point into the table where the columns can be found.
         self._set_rmtab_attrs()
+        self._unmask()
 
     def _set_rmtab_attrs(self):
         self.meta["VERSION"] = self.version
@@ -114,12 +115,28 @@ class RMTable(Table):
                 else:
                     self[col].meta["ucd"] = None
 
-
     def read(*args, **kwargs):
         """Reads in a table from a file."""
         table = RMTable(Table.read(*args, **kwargs))
         table._add_ucds()
         return table
+
+    def _unmask(self):
+        for col in self.columns:
+            if type(self[col]) is MaskedColumn:
+                if self[col].dtype.kind == "f":
+                    fill_value = np.nan
+                elif self[col].dtype.kind == "i":
+                    fill_value = -2147483648
+                elif self[col].dtype.kind == "S" or self[col].dtype.kind == "U":
+                    fill_value = ""
+                elif col in self.standard_blanks:
+                    fill_value = self.standard_blanks[col]
+                else:
+                    warnings.warn(f"Could not find a fill value for {col} - using None")
+                    fill_value = None
+                new_col = self[col].filled(fill_value=fill_value)
+                self[col] = new_col
 
     def write_votable(self, filename, *args, **kwargs):
         """Writes the table to a VOTable file."""
@@ -157,7 +174,7 @@ class RMTable(Table):
                 self.units[col.name] = col.unit
             if hasattr(col, "meta"):
                 self.ucds[col.name] = col.meta["ucd"]
-                
+
         self._add_ucds()
         return ret
 
