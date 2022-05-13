@@ -96,6 +96,8 @@ class RMTable(Table):
         self.size = len(self)
 
     def _new_from_slice(self, slice_):
+        # For some dumb reason, the OG _new_from_slice method
+        # clears the meta attributes.
         ret = super()._new_from_slice(slice_)
         ret._add_ucds()
         ret._set_rmtab_attrs()
@@ -104,10 +106,14 @@ class RMTable(Table):
     def _add_ucds(self):
         """Adds ucds to the meta of each column."""
         for col in self.columns:
-            if col in self.standard_columns:
-                self[col].meta["ucd"] = self.standard[col]["ucd"]
-            else:
-                self[col].meta["ucd"] = None
+            # Check if ucd has already been set
+            if not "ucd" in self[col].meta:
+                # If not, set it from the standard
+                if col in self.standard_columns:
+                    self[col].meta["ucd"] = self.standard[col]["ucd"]
+                else:
+                    self[col].meta["ucd"] = None
+
 
     def read(*args, **kwargs):
         """Reads in a table from a file."""
@@ -122,6 +128,10 @@ class RMTable(Table):
     def write_tsv(self, filename, *args, **kwargs):
         """Writes the table to a tsv file."""
         super().write(filename, *args, **kwargs, format="ascii.tab")
+
+    def read_tsv(filename, *args, **kwargs):
+        """Reads a table from a tsv file."""
+        return RMTable.read(filename, *args, **kwargs, format="ascii.tab")
 
     def add_column(
         self,
@@ -142,6 +152,12 @@ class RMTable(Table):
     ):
         """Adds multiple columns to the table."""
         ret = super().add_columns(cols, indexes, names, copy, rename_duplicate)
+        for col in cols:
+            if hasattr(col, "unit"):
+                self.units[col.name] = col.unit
+            if hasattr(col, "meta"):
+                self.ucds[col.name] = col.meta["ucd"]
+                
         self._add_ucds()
         return ret
 
