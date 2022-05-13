@@ -81,11 +81,7 @@ class RMTable(Table):
         self.standard_flux_type = self.entries["flux_type"]
         self.standard_complexity_test = self.entries["complexity_test"]
 
-        if data is not None:
-            super().__init__(data=data, *args, **kwargs)
-        else:
-            # from IPython import embed; embed()
-            super().__init__()
+        super().__init__(data=data, *args, **kwargs)
         # Add ucds to meta of each column
         self._add_ucds()
         # Add descriptions to each column
@@ -125,7 +121,7 @@ class RMTable(Table):
         """Adds descriptions to each column."""
         for col in self.columns:
             # Check if description has already been set
-            if col in self.standard_columns and self[col] is not None:
+            if col in self.standard_columns and self[col].description is not None:
                 self[col].description = self.standard_descriptions[col]
 
     def read(*args, **kwargs):
