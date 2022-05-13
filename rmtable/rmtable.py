@@ -50,25 +50,25 @@ class RMTable(Table):
     """
 
     def __init__(self, data=None, *args, **kwargs):
-        version = __version__
+        self.version = __version__
 
         self.standard = __standard__
         self.standard_columns = list(self.standard.keys())
-        self.standard_dtypes = [
-            self.standard[col]["dtype"] for col in self.standard_columns
-        ]
-        self.standard_limits = [
-            self.standard[col]["limits"] for col in self.standard_columns
-        ]
-        self.standard_blanks = [
-            self.standard[col]["blank"] for col in self.standard_columns
-        ]
-        self.standard_units = [
-            self.standard[col]["units"] for col in self.standard_columns
-        ]
-        self.standard_ucds = [
-            self.standard[col]["ucd"] for col in self.standard_columns
-        ]
+        self.standard_dtypes = {
+            col: self.standard[col]["dtype"] for col in self.standard_columns
+        }
+        self.standard_limits = {
+            col: self.standard[col]["limits"] for col in self.standard_columns
+        }
+        self.standard_blanks = {
+            col: self.standard[col]["blank"] for col in self.standard_columns
+        }
+        self.standard_units = {
+            col: self.standard[col]["units"] for col in self.standard_columns
+        }
+        self.standard_ucds = {
+            col: self.standard[col]["ucd"] for col in self.standard_columns
+        }
 
         self.entries = __entries__
         self.standard_rm_method = self.entries["rm_method"]
@@ -80,30 +80,86 @@ class RMTable(Table):
 
         if data is not None:
             super().__init__(data=data, *args, **kwargs)
-            self.add_missing_columns()
-            self.verify_limits()
-            self.verify_standard_strings()
         else:
-            super().__init__(
-                names=self.standard_columns,
-                dtype=self.standard_dtypes,
-                units=self.standard_units,
-            )
+            # from IPython import embed; embed()
+            super().__init__()
         # Add ucds to meta of each column
-        for col in self.standard_columns:
-            self[col].meta["ucd"] = self.standard[col]["ucd"]
-
-        self.meta["VERSION"] = version
-
+        self._add_ucds()
         # These are for when extra columns might be added.
         # They point into the table where the columns can be found.
-        self.units = self.standard_units.copy()
-        self.ucds = self.standard_ucds.copy()
+        self._set_rmtab_attrs()
+
+    def _set_rmtab_attrs(self):
+        self.meta["VERSION"] = self.version
+        self.units = {col: self[col].unit for col in self.columns}
+        self.ucds = {col: self[col].meta["ucd"] for col in self.columns}
         self.size = len(self)
+
+    def _new_from_slice(self, slice_):
+        ret = super()._new_from_slice(slice_)
+        ret._add_ucds()
+        ret._set_rmtab_attrs()
+        return ret
+
+    def _add_ucds(self):
+        """Adds ucds to the meta of each column."""
+        for col in self.columns:
+            if col in self.standard_columns:
+                self[col].meta["ucd"] = self.standard[col]["ucd"]
+            else:
+                self[col].meta["ucd"] = None
 
     def read(*args, **kwargs):
         """Reads in a table from a file."""
-        return RMTable(Table.read(*args, **kwargs))
+        table = RMTable(Table.read(*args, **kwargs))
+        table._add_ucds()
+        return table
+
+    def write_votable(self, filename, *args, **kwargs):
+        """Writes the table to a VOTable file."""
+        super().write(filename, *args, **kwargs, format="votable")
+
+    def write_tsv(self, filename, *args, **kwargs):
+        """Writes the table to a tsv file."""
+        super().write(filename, *args, **kwargs, format="ascii.tab")
+
+    def add_column(
+        self,
+        col,
+        index=None,
+        name=None,
+        rename_duplicate=False,
+        copy=True,
+        default_name=None,
+    ):
+        """Adds a column to the table."""
+        ret = super().add_column(col, index, name, rename_duplicate, copy, default_name)
+        self._add_ucds()
+        return ret
+
+    def add_columns(
+        self, cols, indexes=None, names=None, copy=True, rename_duplicate=False
+    ):
+        """Adds multiple columns to the table."""
+        ret = super().add_columns(cols, indexes, names, copy, rename_duplicate)
+        self._add_ucds()
+        return ret
+
+    def add_columns(self, *args, **kwargs):
+        """Adds multiple columns to the table."""
+        super().add_columns(*args, **kwargs)
+        self._add_ucds()
+
+    def remove_column(self, name):
+        """Removes a column from the table."""
+        return super().remove_column(name)
+
+    def remove_columns(self, names):
+        """Removes multiple columns from the table."""
+        for name in names:
+            del self.units[name]
+            del self.ucds[name]
+        return super().remove_columns(names)
 
     def verify_limits(self):
         """This function checks that all numerical columns conform to the
@@ -113,19 +169,19 @@ class RMTable(Table):
         into the master catalog.
         """
         good = True  # Remains true until a non-conforming entry is found.
-        for i in range(len(self.standard_columns)):
-            if self.standard_columns[i] not in self.columns:  # ignore missing columns.
+        for col in self.standard_columns:
+            if col not in self.columns:  # ignore missing columns.
                 continue
-            if self.standard_limits[i] == "":  # ignore string columns
+            if self.standard_limits[col] == "":  # ignore string columns
                 continue
-            data = self[self.standard_columns[i]]
+            data = self[col]
             overmax = (
-                data > self.standard_limits[i][1]
+                data > self.standard_limits[col][1]
             ).sum()  # count how many outside of acceptable range
-            undermin = (data < self.standard_limits[i][0]).sum()
+            undermin = (data < self.standard_limits[col][0]).sum()
             if overmax + undermin > 0:
                 print(
-                    f"Column '{self.standard_columns[i]}' has {overmax + undermin} entries outside the range of allowed values!"
+                    f"Column '{col}' has {overmax + undermin} entries outside the range of allowed values!"
                 )
                 good = False
         if good:
@@ -228,17 +284,16 @@ class RMTable(Table):
         missing_columns = [
             column for column in self.standard_columns if column not in self.columns
         ]
-        for column in missing_columns:
-            i = self.standard_columns.index(column)
-            if self.standard_blanks[i] == None:
-                warnings.warn(f"Missing essential column: {column}")
+        for col in missing_columns:
+            if self.standard_blanks[col] == None:
+                warnings.warn(f"Missing essential column: {col}")
             self.add_column(
                 Column(
-                    data=[self.standard[column]["blank"]] * len(self),
-                    name=column,
-                    dtype=self.standard[column]["dtype"],
-                    unit=self.standard[column]["units"],
-                    meta={"ucd": self.standard[column]["ucd"]},
+                    data=[self.standard_blanks[col]] * len(self),
+                    name=col,
+                    dtype=self.standard_dtypes[col],
+                    unit=self.standard_units[col],
+                    meta={"ucd": self.standard_ucds[col]},
                 )
             )
 
