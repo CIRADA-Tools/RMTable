@@ -69,6 +69,9 @@ class RMTable(Table):
         self.standard_ucds = {
             col: self.standard[col]["ucd"] for col in self.standard_columns
         }
+        self.standard_descriptions = {
+            col: self.standard[col]["description"] for col in self.standard_columns
+        }
 
         self.entries = __entries__
         self.standard_rm_method = self.entries["rm_method"]
@@ -85,6 +88,8 @@ class RMTable(Table):
             super().__init__()
         # Add ucds to meta of each column
         self._add_ucds()
+        # Add descriptions to each column
+        self._add_descriptions()
         # These are for when extra columns might be added.
         # They point into the table where the columns can be found.
         self._set_rmtab_attrs()
@@ -115,6 +120,13 @@ class RMTable(Table):
                     self[col].meta["ucd"] = self.standard[col]["ucd"]
                 else:
                     self[col].meta["ucd"] = None
+
+    def _add_descriptions(self):
+        """Adds descriptions to each column."""
+        for col in self.columns:
+            # Check if description has already been set
+            if col in self.standard_columns and self[col] is not None:
+                self[col].description = self.standard_descriptions[col]
 
     def read(*args, **kwargs):
         """Reads in a table from a file."""
