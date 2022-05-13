@@ -119,7 +119,7 @@ table['int_time']=120
 
 #The following lines check the table values for conformance with the standard
 # (within limits, and using standard string values where applicable).
-# Note that these methods are always run automatically, but can be run manually
+table.add_missing_columns()
 table.verify_limits()
 table.verify_standard_strings()
 
