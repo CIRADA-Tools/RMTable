@@ -88,6 +88,7 @@ class RMTable(Table):
         # These are for when extra columns might be added.
         # They point into the table where the columns can be found.
         self._set_rmtab_attrs()
+        # Replace any masked columns with fill values
         self._unmask()
 
     def _set_rmtab_attrs(self):
@@ -118,7 +119,6 @@ class RMTable(Table):
     def read(*args, **kwargs):
         """Reads in a table from a file."""
         table = RMTable(Table.read(*args, **kwargs))
-        table._add_ucds()
         return table
 
     def _unmask(self):
