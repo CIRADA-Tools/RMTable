@@ -166,9 +166,32 @@ class RMTable(Table):
         rename_duplicate=False,
         copy=True,
         default_name=None,
+        ucd=None,
+        unit=None,
     ):
         """Adds a column to the table."""
+        # Run the astropy add_column method
         ret = super().add_column(col, index, name, rename_duplicate, copy, default_name)
+
+        # Add ucds/units if they are called in this function
+        if hasattr(col, "name"):
+            colname = col.name
+        else:
+            colname = name
+        self[colname].unit = unit
+        self.units[colname] = unit
+        self[colname].meta["ucd"] = ucd
+        self.ucds[colname] = ucd
+
+        # Add ucds/units if they are in the column data
+        if hasattr(col, "unit"):
+            assert unit is None, "Cannot specify both unit and unit in column"
+            self.units[colname] = col.unit
+            self[colname].unit = col.unit
+        if hasattr(col, "meta"):
+            assert ucd is None, "Cannot specify both ucd and ucd in column"
+            self.ucds[colname] = col.meta["ucd"]
+            self[colname].meta["ucd"] = col.meta["ucd"]
         self._add_ucds()
         return ret
 
@@ -185,11 +208,6 @@ class RMTable(Table):
 
         self._add_ucds()
         return ret
-
-    def add_columns(self, *args, **kwargs):
-        """Adds multiple columns to the table."""
-        super().add_columns(*args, **kwargs)
-        self._add_ucds()
 
     def remove_column(self, name):
         """Removes a column from the table."""
