@@ -80,6 +80,7 @@ class RMTable(Table):
         self.standard_classification = self.entries["classification"]
         self.standard_flux_type = self.entries["flux_type"]
         self.standard_complexity_test = self.entries["complexity_test"]
+        self.standard_ionosphere = self.entries["ionosphere"]
 
         super().__init__(data=data, *args, **kwargs)
         # Add ucds to meta of each column
@@ -322,7 +323,17 @@ class RMTable(Table):
                 "The following non-standard complexity test type(s) were found (at least once each):"
             )
             print(*invalid_complexity_test, sep="\n")
-
+        invalid_ionosphere = []
+        for entry in self.table["ionosphere"]:
+            if (entry not in self.standard_ionosphere) and (
+                entry not in invalid_ionosphere
+            ):
+                invalid_ionosphere.append(entry)
+        if len(invalid_ionosphere) > 0:
+            print(
+                "The following non-standard ionosphere correction type(s) were found (at least once each):"
+            )
+            print(*invalid_ionosphere, sep="\n")
         if (
             len(
                 invalid_methods
@@ -330,6 +341,7 @@ class RMTable(Table):
                 + invalid_telescope
                 + invalid_type
                 + invalid_flux
+                + invalid_ionosphere
             )
             == 0
         ):

@@ -4,6 +4,7 @@
         "RM Synthesis - Pol. Int",
         "RM Synthesis - Fractional polarization",
         "RM Synthesis",
+        "Faraday Synthesis",
         "QUfit",
         "QUfit - Delta function",
         "QUfit - Gaussian x Burn Slab",
@@ -23,7 +24,6 @@
     ],
     "telescope": [
         "VLA",
-        "JVLA",
         "LOFAR",
         "ATCA",
         "DRAO-ST",
@@ -33,6 +33,10 @@
         "ATA",
         "ASKAP",
         "ARO",
+        "Arecibo",
+        "Parkes",
+        "CHIME",
+        "FAST",
         "Unknown"
     ],
     "classification": [
@@ -55,13 +59,23 @@
     ],
     "complexity_test": [
         "",
-        "Unknown",
         "None",
         "Sigma_add",
         "Second moment",
         "QU-fitting",
         "Inspection",
+        "Machine learning - Alger 2021",
+        "Convolutional neural networks - Brown 2019",
         "QU-fit & BIC"
+    ],
+    "ionosphere": [
+        "Unknown",
+        "None",
+        "RMextract",
+        "ionFR",
+        "FARAD",
+        "ALBUS",
+        "FRion"
     ],
     "version": "1.2"
 }
