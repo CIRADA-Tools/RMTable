@@ -115,7 +115,7 @@ class RMTable(Table):
             if not "ucd" in self[col].meta or self[col].meta["ucd"] is None:
                 # If not, set it from the standard
                 if col in self.standard_columns:
-                    if self[col].meta["ucd"] is None:
+                    if "ucd" in self[col].meta and self[col].meta["ucd"] is None:
                         # Issue a warning here if the ucd set to None
                         warnings.warn(
                             f"Empty ucd for column '{col}', replacing with standard '{self.standard[col]['ucd']}'"
