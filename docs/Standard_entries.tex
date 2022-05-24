@@ -1,0 +1,183 @@
+\documentclass[10pt,modern]{aastex63} 
+
+\usepackage{natbib}
+\usepackage{tablefootnote}
+
+
+
+
+
+\begin{document} 
+\title{RMTable Standard string values}
+ 
+ 
+Several of the RMTable columns are for descriptive strings (for example, the source type or the method used for RM determination). To encourage better uniformity across catalogs, we have made lists of values that have been either used in previous catalogs or are expected to be used in near-future catalogs. We suggest that authors of new RMTable catalogs check if their values for these columns match one of the existing values in the following tables and do their best to match these values (i.e., same spelling and capitalization). This will make it easier for catalog users to search based on these values if desired. Authors should not hesitate to define their own values if none of the existing values are appropriate; new values will be added to these tables as they are used in new catalogs.
+
+
+\begin{table}[h]
+\caption{Standard values for RM determination method (`rm\_method')}\label{tab:rm_method}
+\begin{center}
+\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+
+{\bf Standard value:} & {\bf Notes:} \\ \hline
+Unknown & Default value if not specified.\\
+EVPA-linear fit & Linear regression of polarization angle as function of wavelength-squared.\\
+RM Synthesis & Any variation of the RM-synthesis algorithm\\
+RM Synthesis - Pol. Int & RM synthesis performed using measured Stokes $Q$ and $U$ values.\\
+RM Synthesis - Fractional polarization & RM synthesis performed using $Q$ and $U$ values normalized by Stokes $I$.\\
+Faraday Synthesis & Joint aperture and RM synthesis, as described in \citet{Bell2012}.\\
+QUfit & Any variation of QU-fitting algorithm.\\
+QUfit - Delta function & QU-fitting of a Faraday-simple model.\\
+QUfit - Burn slab & QU-fitting of a slab model from \citet{Burn66}.\\
+QUfit - Gaussian & QU-fitting of a Gaussian model.\\
+QUfit - Gaussian x Burn Slab & QU-fitting of a model which is the product of a Gaussian and Burn slab.\\
+QUfit - Multiple & QU-fitting to a model that is a combination of different models.\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+
+\begin{table}[h]
+\caption{Standard values for Faraday complexity metric (`complex\_test')}\label{tab:complex_test}
+\begin{center}
+\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+{\bf Standard value:} & {\bf Notes:} \\ \hline
+`'  (empty string) & Default value if not specified.\\
+None & No complexity test performed.\\
+Sigma\_add & The $\sigma_\mathrm{add}$ method implemented in RM-Tools \citep{RM-Tools}.\\
+Second\_moment & Analysis of the second moment of RM-clean components.\\
+QU-fitting & QU-fitting of Faraday complex model.\\
+Inspection & Visual inspection of FDF for deviations from Faraday-simple response.\\
+Machine learning - Alger 2021 & Machine learning algorithm developed by \citet{Alger2021}.\\
+Convolutional neural networks - Brown 2019 & Convolutional neural network algorithm developed by \citet{Brown2019}.\\
+QU-fit \& BIC & Bayesian Information Criterion applied to QU-fitting model (comparing simple vs complex models).\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+
+
+\begin{table}[h]
+\caption{Standard values for ionospheric Faraday rotation correction method (`ionosphere')}\label{tab:ionosphere}
+\begin{center}
+\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+{\bf Standard value:} & {\bf Notes:} \\ \hline
+Unknown & Default value if not specified.\\
+None & No ionospheric correction performed.\\
+RMextract & The RMextract package \citep{RMextract}.\\
+ionFR & The ionospheric Faraday rotation package \citep{Sotomayor13}. \\
+FARAD & The AIPS task FARAD.\footnote{www.aips.nrao.edu/cgi-bin/ZXHLP2.PL?FARAD}\\
+ALBUS & The ionosphere correction tool in the Advanced Long Baseline User Software (ALBUS).\footnote{github.com/twillis449/ALBUS\_ionosphere}\\
+FRion & The FRion Python package for time-averaged image-domain ionospheric correction.\footnote{frion.readthedocs.io}\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+
+
+
+\begin{table}[h]
+\caption{Standard values for polarization bias correction method (`pol\_bias')}\label{tab:pol_bias}
+\begin{center}
+\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+{\bf Standard value:} & {\bf Notes:} \\ \hline
+Unknown & Default value if not specified.\\
+None & No bias correction performed.\\
+Not described & The paper reports that a correction was performed, but does not specify which method or equation.\\
+1974ApJ...194..249W & \citet{Wardle1974}\\
+1985A\&A...142..100S & \citet{Simmons1985}\\
+1986ApJ...302..306K & \citet{Killeen1986}\\
+2012PASA...29..214G & \citet{George2012}\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+
+
+
+\begin{table}[h]
+\caption{Standard values for telescope used (`telescope')}\label{tab:telescope}
+\begin{center}
+\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+{\bf Standard value:} & {\bf Notes:} \\ \hline
+Unknown & Default value if not specified.\\
+VLA & Karl G. Jansky Very Large Array\footnote{To avoid splitting entries between VLA and JVLA, we suggest only using VLA.}\\
+LOFAR & Low Frequency Array\\
+ATCA & Australia Telescope Compact Array\\
+DRAO-ST & Dominion Radio Astrophysical Observatory Synthesis Telescope\\
+MWA & Murchison Widefield Array\\
+ATA & Allen Telescope Array\\
+WSRT & Westerbork Synthesis Radio Telescope\\
+ASKAP & Australian Square Kilometre Array Pathfinder\\
+Effelsberg & Effelsberg 100-m Radio Telescope\\
+ARO & Algonquin Radio Observatory 46-m telescope\\
+MeerKAT & \\
+Arecibo & Arecibo Telescope\\
+Parkes & Parkes Murriyang (64-m) Radio Telescope\\
+CHIME & Canadian H Intensity Mapping Experiment\\
+FAST & Five-hundred-meter Aperture Spherical Telescope\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+
+
+
+\begin{table}[h]
+\caption{Standard values for Stokes extraction method (`flux\_type')}\label{tab:flux_type}
+\begin{center}
+\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+{\bf Standard value:} & {\bf Notes:} \\ \hline
+Unknown & Default value if not specified.\\
+Peak & Stokes values extracted from single pixel (peak Stokes I or polarized intensity).\\
+Integrated & Stokes values integrated over some aperture.\\
+Gaussian fit - Peak & Stokes values from peak of fitted Gaussian.\\
+Gaussian fit - Integrated & Stokes values from integrated brightness of fitted Gaussian.\\
+Box & Stokes values determined from integration over fixed box size.\\
+Visibilities & Stokes values extract from modelling or fitting of interferometric visibilities.\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+
+
+
+
+\begin{table}[h]
+\caption{Standard values for source classification}\label{tab:source_type}
+\begin{center}
+\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+{\bf Standard value:} & {\bf Notes:} \\ \hline
+`' (empty string) & Default value if not specified.\\
+Pulsar & \\
+Galaxy & Radio Galaxy \\
+AGN & Active Galactic Nucleus \\
+SNR & Supernova Remnant\\
+FRB & Fast radio burst\\
+\hline
+\end{tabular}
+\end{center}
+\label{default}
+\end{table}%
+
+ \clearpage
+
+\bibliography{References}{} % your references Yourfile.bib
+\bibliographystyle{aasjournal} % style aa.bst 
+
+
+
+
+\end{document}  

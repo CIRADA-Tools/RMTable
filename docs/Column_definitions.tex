@@ -1,0 +1,229 @@
+\documentclass[10pt,modern]{aastex63} 
+
+\usepackage{natbib}
+
+\newcommand{\radu}{rad m$^{-2}$}
+
+
+
+
+\begin{document} 
+%\title{RMTable Standard column definitions}
+ 
+ 
+ \section{RMTable Standard column definitions}
+
+The following text has been mostly taken from the standard definition paper, Van Eck et al. (submitted).
+
+ 
+The RMTable standard contains a set of proposed standard columns to guide the development of future RM catalogs. The list of columns is given in Table~\ref{tab:RMTable}, and specific information about each column is given below. Not all of these columns will be appropriate for all catalogs, and individual catalogs will almost always need to have additional columns with survey- or catalog-specific information, so these columns serve as a starting point for authors to consider while designing their catalogs and pipelines. The columns defined in this standard, and particularly their internal names, should be treated as reserved names for future catalogs to avoid confusion.
+
+All columns have standardized internal names, which are used in the data representation to assign machine-readable names to columns. Relevant columns also have assigned standard units, to avoid problems with propagating units through appropriate metadata, and to ease comparisons between different catalogs. A few columns (those defining the source sky coordinates) are labelled as essential, meaning that they must be present for a catalog to be sensibly interpreted in terms of the standard. All other columns are assigned a default value for missing data, which is usually a floating-point NaN or blank string as appropriate. 
+To encourage standardization across catalogs, certain columns (particularly those defining methods used) come with lists of suggested values. The currently defined lists are given in another document on this repository. 
+
+For columns specified as being floating point numbers, it is not specified whether these should be 32- or 64-bit floats. The exception to this is the coordinate columns, which are specified as 64-bit (double precision) floating point in order to accommodate RMs derived from Very Long Baseline Interferometry observations.
+All uncertainties/errors are expected to be 1$\sigma$ standard deviations. All string columns should take care not to contain special characters such as tabs or newlines, to avoid causing problems with text storage formats.
+Where columns are expected to refer to published papers, the suggested format is to use `bibcodes' created by the SAO/NASA Astrophysics Data System (ADS), with the second preferred option being digital object identifiers (DOIs); these are suggested because they provide an identifier that is guaranteed to be unique and can easily lead to the publication using either the ADS or an internet search engine, with the ADS bibcodes producing typically fewer false hits when searching and being partially human-readable. For cases where the papers are not yet published a short descriptive name can be used as a temporary measure but should be replaced after publication.
+All columns are defined the same way for both RM synthesis techniques and QU-fitting techniques, although the methods of deriving some quantities may be significantly different.
+
+\subsubsection{Right Ascension, Declination, Galactic longitude and latitude}
+The sources' coordinates, in both equatorial and Galactic coordinate systems, in decimal degrees (for ease of coordinate-based selection). Both sets of coordinates are considered essential in order to make it easy to select sources based on location. For equatorial coordinates, the International Celestial Reference System (ICRS) is used as it is the currently adopted standard of the International Astronomical Union.
+
+
+\subsubsection{Position error}
+The 1-dimensional uncertainty in the position, in decimal degrees. Rather than using the typical uncertainties in both right ascension and declination (which typically leave out the position angle of the error ellipse, making it impossible to accurately transform between coordinate systems), a single value is used to make cross-matching uncertainty estimation more straightforward. This also avoids potential confusions or mistakes with projection effects on the longitude/right ascension errors. In cases where the position error ellipse is significantly non-circular, we suggest using the semi-major axis (i.e. the larger error) for this column.
+
+\subsubsection{RM and error}
+The RM and corresponding error, in \radu. For Faraday-thin polarized sources, this is simply the measured Faraday depth of the polarized emission. As described above, in the case of Faraday-thick features this is the centroid in Faraday depth or a similar quantity. For partially spatially-resolved sources this is the average over the source, or whatever other characteristic value the authors decide applies to the source. If multiple polarization components are present, each is recorded as a separate row in the table with its own RM, error, and other polarization properties. The catalog value should always represent the RM of the full line of sight to the source as measured; RMs with any component or foreground subtraction (e.g., removing the Milky Way contribution) or redshift correction should not be reported.
+
+\subsubsection{Width in Faraday depth and error}
+The width of the polarized feature in the FDF, and corresponding error, in \radu. This can be either measured (from RM synthesis) or inferred from a model (QU-fitting). This quantity is zero when an explicitly Faraday-thin model is fit or assumed, and can take other values when either a Faraday thick model is fit \citep[e.g.,][]{Ma2019} or the dispersion in RM-synthesis clean components is measured \citep[e.g.,][]{Livingston2021}. It must be noted that there are many (incompatible) measures of width in Faraday depth: the $\Delta$RM of a uniform `Burn slab' model \citep{Burn66} is not equivalent to the Gaussian $\sigma_{\mathrm{RM}}$ of an external Faraday dispersion model \citep{Sokoloff98} or to a $\sigma^2_\phi$ derived from RM-synthesis clean components. This is further complicated by cases where two width parameters are included in the same component fit \citep[e.g., ][]{OSullivan2017}; in such cases we suggest that if a full-width-at-half-maximum (FWHM) for the model FDF could be derived, this may be the closest to a universal parameter that may be possible here. In general this quantity will not be comparable between models and between different catalogs, but may be useful to compare sources within the same catalog. Authors should ensure that the width parameter is explicitly defined, and catalog users should refer back to the original publications to find these definitions.
+
+\subsubsection{Faraday complexity flag and metric}
+A single parameter for whether the source shows Faraday complexity, which for the purposes of this standard is anything other than being compatible with a single-component Faraday-thin model. An additional value, for sources where the complexity has not been assessed or reported, is also needed. Thus three possible values are needed, and a single character is used with the possible values of `Y',`N`, or `U' for `Yes', `No', and `Unknown', respectively. For sources with two or more RM components or a component with a significant non-zero width in Faraday depth, this flag should automatically become `Y' (for each row, where multiple components are present).
+
+The metric or test used to assess Faraday complexity is also recorded as a short string. This string could be a reference to a paper describing the metric, or a short description (80 characters or less) of the method. A list of suggested values appears in the online documentation, in order to encourage authors to use the same values when using the same methods.
+
+\subsubsection{RM determination method}
+A short string describing the method used to determine the RM from the polarized spectra. A list of suggested values appears in the online documentation, in order to encourage authors to use the same values when using the same methods.
+
+\subsubsection{Ionospheric correction method}
+A string describing the method used to correct for ionospheric Faraday rotation. This could take the form of the software title, a paper reference, or a short algorithm name. A list of suggested values appears in the online documentation, in order to encourage authors to use the same values when using the same methods. If no correction is applied, the value should be `None'; if it is not known if a correction was applied the default value is `Unknown'.
+
+\subsubsection{Number of RM components}
+An integer giving the number of measured RM components identified in the source. This is intended to indicate when the same source will have additional rows in the table (containing the information on the other components). The default value is `1'.
+
+\subsubsection{Stokes $I, Q, U, V$ and errors}
+The four Stokes parameters and their corresponding errors, at a given reference frequency. Stokes $I$ may have a different reference frequency, as it may be derived from multi-frequency synthesis imaging or some other algorithm that is different than how the other Stokes parameters are derived. The Stokes parameters may be either intensities (Jy/beam) or flux densities (solid-angle integrated intensities, Jy). Brightness temperatures are not supported. For Stokes $Q$ and $U$, these are the values derived from the Faraday rotation model (whether that model is a QU-fitting model, an RM-Clean \citep{Heald09} component model, a fit to the peak in RM-synthesis, or something analogous to these), at the corresponding reference frequency and for only this polarized component, and not the actual channel values.
+
+\subsubsection{Stokes $I$ spectral index and error}
+The flux density spectral index ($\alpha$) in total intensity, following the $I \propto \nu^{+\alpha}$ convention (such that most synchrotron sources will have negative values), and corresponding error. This can be the in-band spectral index or that derived with an additional band. Higher order (curvature) terms are not included in this standard, but where authors choose to include them we suggest that the mathematical definition of those terms should be explicitly described.
+
+\subsubsection{Reference frequency for Stokes $I$}
+The frequency, in Hz, for which the Stokes $I$ intensity or flux density applies, as well as for the spectral index if a spectral curvature model was fit.
+
+\subsubsection{Polarized intensity and error}
+The polarized intensity (in either intensity or flux density units) of the polarized component, at the polarization reference frequency. If polarization bias correction is used, this is the corrected polarized intensity. In sources where multiple polarized components have been identified, this is the polarized intensity of only the component with the corresponding RM.
+
+\subsubsection{Polarization bias correction method}
+A string containing the method used to correct the polarized intensity for bias \citep[e.g., ][]{Wardle1974, Simmons1985}. If no correction was applied, this should be `None'; if it is not known if a correction was applied, this should be `Unknown'. A list of suggested values appears in the online documentation, in order to encourage authors to use the same values when using the same methods.
+
+\subsubsection{Stokes extraction method}
+A string describing the method used to extract the source spectra, for example whether they were intensities derived from peak-pixel values, aperture-integrated flux densities, or intensities or flux densities derived from point-source or Gaussian fitting. If the method is not known, the default value is `Unknown'. A list of suggested values appears in the online documentation, in order to encourage authors to use the same values when using the same methods.
+
+\subsubsection{Integration aperture}
+The linear size of the integration aperture over which the spectra have been integrated or averaged, in decimal degrees. If only peak/single pixel values are extracted from the images, this should be zero. If a circular or square aperture is used, the diameter or side length should be given. If a Gaussian-fit or similar process was used, then the FWHM of the fitted area would be appropriate.
+
+
+\subsubsection{Fractional (linear) polarization and error}
+The fractional polarization of the polarized component, and corresponding error. For Faraday thick components, this should be the fractional polarization at zero wavelength (i.e., not including depolarization effects) where it is possible to derive this. Values should be fractional, and not percentages; nominally values should be less than 1, but this is not enforced because of the complications that can potentially be introduced by interferometer response and other effects.
+
+\subsubsection{Electric vector polarization angle and error}
+The electric vector polarization angle (EVPA) and corresponding error, in degrees and at the polarization reference frequency, following the IAU standard convention \citep{IAU-polangle}: increasing east from north, with zero degrees being towards the north celestial pole. We note that cosmology data sometimes use a different convention \citep{deSeregoAlighieri2017}, west-from-north, so care should be used in correcting the convention when using such data. Polarization angles should not be reported relative to the Galactic coordinate frame; the angles should also be explicitly the EVPA and not the plane-of-sky magnetic field. Polarization angle is only defined over a 180$^\circ$ span; we have chosen [0\degr,180\degr) rather than the sometimes-used ($-90$\degr,90\degr].
+
+\subsubsection{Reference frequency for polarization}
+The frequency, in Hz, at which the relevant polarization properties are applicable. This applies to the polarized intensity, EVPA, and the Stokes $Q,U$, and $V$ values. For RM synthesis techniques, this is typically the frequency corresponding to $\lambda^2_0$ \citep{Brentjens2005} which is used to improve the polarization angle behaviour of the RMSF; for QU-fitting there is no equivalent value and authors can choose a suitable value (we suggest to make this equal to the Stokes I reference frequency) or leave the corresponding columns blank.
+
+\subsubsection{De-rotated EVPA and error}
+The EVPA with the effects of Faraday rotation removed (i.e. the polarization angle at the location of emission), and associated error, in degrees. This is sometimes called the `zero wavelength' or `intrinsic' polarization angle. 
+
+\subsubsection{Beam major axis, minor axis, and position angle}
+The three parameters describing the shape of the synthesized beam at the reference frequency, as a Gaussian: the major axis, minor axis, and position angle, all in degrees. The major and minor axes are the FWHM of the Gaussian beam model, along the major and minor axes respectively, and the position angle is the angle of the major axis measured east from north similarly to the polarization angle, and is similarly defined in the range [0\degr\,180\degr).
+
+\subsubsection{Reference frequency for beam shape}
+The reference frequency for the beam shape parameters, in Hz, if the beam size follows a typical $1/\nu$ frequency dependence. If the individual channels have been convolved to a common size, this frequency should be set to zero to indicate that the beam has no frequency dependence. If the frequency dependence of the beam is not known, this should be left blank (NaN).
+
+\subsubsection{Lowest and highest frequencies}
+The center frequencies of the lowest and highest frequency channels used in determining the RM, in Hz. Channels that have been flagged out or otherwise not used should not be used to determine these values.
+
+\subsubsection{Typical channel width}
+The bandwidth of the channels used to determine the RM, in Hz. If channels were averaged before being used to compute the RM, the width of the averaged channels should be used. If channels of different widths have been used together, this should be the most common channel bandwidth (the mode).
+
+\subsubsection{Number of channels}
+The number of frequency channels used to determine the RM. Channels that have been flagged out or otherwise were not used should not be included in this count. Since integers cannot use NaN values to represent missing data, any negative number can be used to represent missing values.
+
+\subsubsection{Full width at half max of the rotation measure spread function}
+The FWHM of the rotation measure spread function (RMSF) calculated during RM-synthesis, in rad m$^{-2}$. If RM-synthesis is not used, this column can be ignored or set to the theoretical RMSF FWHM (as defined in \citealt{Brentjens2005}) given the frequency coverage of the data.
+
+\subsubsection{Typical per-channel noise in Stokes $Q,U$}
+An estimate for the noise in Stokes $Q$ and $U$ for a typical channel, in the same units as the Stokes parameters. The exact method of determining this is left to the catalog authors, but a mean or median of the channel noise values would be reasonable.
+
+\subsubsection{Name of Telescope(s)}
+A string containing the names or acronyms of all telescopes from which data were used, as a comma separated list. A list of suggested values appears in the online documentation, in order to encourage authors to use the same values when using the same methods. The default value, if the data origin is not known, is `Unknown'.
+
+\subsubsection{Integration time}
+The integration time is the amount of time the telescope spent observing the source, in seconds, for a typical channel. If multiple observations at the same frequency were combined, then this should be the sum of the individual observation integration times, but if the observations were for different frequencies then the mean, median, or mode of the integration time for the individual channels should be used.
+
+\subsubsection{Median epoch and interval of observation}
+The median epoch is the midpoint of time between the first and last observations used to determine the RM. If a single observation was used, it should be the time at which the observation was half-complete. This time is stored as the modified Julian date (MJD). The interval of observation is the span of time between the beginning of the first observation and the end of the final observation used to determine the RM, in days. If only a single observation was used, this is the difference between the start and end times of that observation.
+
+\subsubsection{Instrumental leakage estimate}
+An estimate of the degree of instrumental leakage present in Stokes $Q$ and $U$, expressed as a fraction of Stokes $I$. If a leakage correction has been applied, this should be an estimate of the residual leakage after correction.
+
+\subsubsection{Distance from beam center}
+The angular distance of the source from the primary beam center in the observations, in degrees. If multiple observations or a phased array feed are used, this should be the distance from the nearest beam center.
+
+\subsubsection{Name of catalog}
+A string containing a unique name for the catalog. The first preference for this is the paper in which the catalog was published, following the usual preference for the ADS bibcode or DOI. If the paper is not yet published, a short descriptive name can be used as a temporary substitute.
+
+\subsubsection{Data references}
+A string containing references to the sources of data used in determining the RM, following the preferences for references described above. If the paper reporting the catalog also reports on the observations used, then this should be the same paper. If data from multiple papers are used, a comma-separated list should be used.
+
+\subsubsection{Source ID in catalog}
+A string containing the name of the source used in the catalog, if any.
+
+\subsubsection{Source Classification}
+A string containing the source classification, specifically what kind of physical object the source is. If multiple classifications have been given, each should be separated by a comma. A list of suggested values appears in the online documentation, in order to encourage authors to use the same values when using the same methods.
+
+\subsubsection{Notes}
+A string containing any short notes the authors have made about individual sources.
+
+\startlongtable
+\begin{deluxetable*}{p{0.2\linewidth}llccp{0.15\linewidth}}
+\tablecaption{Column definitions for the RMTable standard.\label{tab:RMTable}}
+\tablehead{\colhead{Column Name} & \colhead{Internal name} &  \colhead{Data format} & \colhead{Unit} & \colhead{Limits} & \colhead{Default/Missing}}
+\startdata
+\multicolumn{6}{c}{\bf Position columns:}\\
+Right Ascension [ICRS] & ra & double & deg & [0,360) & Essential   \\
+Declination [ICRS] & dec & double & deg & [-90,90] & Essential  \\
+Galactic Longitude & l & double & deg & [0,360) & Essential  \\
+Galactic Latitude & b & double & deg & [-90,90] & Essential  \\
+Position uncertainty & pos\_err & float & deg & [0,$\infty$) & NaN  \\
+\multicolumn{6}{c}{\bf RM columns:}\\
+Rotation measure & rm & float & rad m$^{-2}$ &(-$\infty$,$\infty$) & NaN\\
+Error in RM & rm\_err & float & rad m$^{-2}$ &[0,$\infty$) & NaN\\
+Width in Faraday depth & rm\_width & float & rad m$^{-2}$ & [0,$\infty$)& NaN\\
+Error in width & rm\_width\_err & float & rad m$^{-2}$& [0,$\infty$)& NaN\\
+Faraday complexity flag & complex\_flag & string(1) & -- & `Y'/'N'/`U' & `U' \\
+Faraday complexity metric$^a$ & complex\_test & string(80) & -- & -- & `'\\
+RM determination method$^a$ & rm\_method & string(40) & -- & -- & `Unknown' \\
+Ionospheric correction method$^a$ & ionosphere & string(40) & -- & -- & `Unknown'\\
+Number of RM components & Ncomp & integer & -- & [1,$\infty$) & 1\\
+\multicolumn{6}{c}{\bf Polarization properties:}\\
+Stokes I$^b$ & stokesI & float & Jy or Jy/beam & [0,$\infty$) & NaN\\
+Error in Stokes I$^b$ & stokesI\_err & float & Jy or Jy/beam & [0,$\infty$) & NaN\\
+Stokes I spectral index & spectral\_index & float & -- & (-$\infty$,$\infty$) & NaN\\
+Error in spectral index & spectral\_index\_err & float & --  & [0,$\infty$) & NaN\\
+Reference frequency for Stokes I & reffreq\_I & float & Hz & (0,$\infty$) & NaN\\
+Polarized intensity & polint & float & Jy or Jy/beam & [0,$\infty$) & NaN\\
+Error in Pol.Int. & polint\_err & float & Jy or Jy/beam & [0,$\infty$) & NaN\\
+Polarization bias correction method$^a$ & pol\_bias & string(40) & -- & -- & `Unknown'\\
+Stokes extraction method$^a$ & flux\_type & string(40) & -- & -- & `Unknown'\\
+Integration aperture & aperture & float & deg & [0,$\infty$) & NaN\\
+Fractional (linear) polarization & fracpol & float & -- & [0,$\infty$) & NaN\\
+Error in fractional polarization & fracpol\_err & float & -- & [0,$\infty$) & NaN\\
+Electric vector polarization angle & polangle & float & deg & [0,180) & NaN\\
+Error in EVPA & polangle\_err & float & deg & [0,$\infty$) & NaN\\
+Reference frequency for polarization & reffreq\_pol & float & Hz & (0,$\infty$) & NaN\\
+Stokes $Q^b$ & stokesQ & float & Jy or Jy/beam & (-$\infty$,$\infty$) & NaN\\
+Error in Stokes $Q^b$ & stokesQ\_err & float & Jy or Jy/beam & [0,$\infty$) & NaN\\
+Stokes $U^b$ & stokesU & float & Jy or Jy/beam & (-$\infty$,$\infty$) & NaN\\
+Error in Stokes $U^b$ & stokesU\_err & float & Jy or Jy/beam & [0,$\infty$) & NaN\\
+De-rotated EVPA & derot\_polangle & float & deg & [0,180) & NaN\\
+Error in De-rotated EVPA & derot\_polangle\_err & float & deg & [0,$\infty$) & NaN\\
+Stokes $V^b$ & stokesV & float & Jy or Jy/beam & (-$\infty$,$\infty$) & NaN\\
+Error in Stokes $V^b$ & stokesV\_err & float & Jy or Jy/beam & [0,$\infty$) & NaN\\
+\multicolumn{6}{c}{\bf Observation properties:}\\
+Beam major axis & beam\_maj & float & deg & [0,$\infty$) & NaN\\
+Beam minor axis & beam\_min & float & deg & [0,$\infty$) & NaN\\
+Beam position angle & beam\_pa & float & deg & [0,180) & NaN\\
+Reference frequency for beam & reffreq\_beam & float & Hz & [0,$\infty$) & NaN\\
+Lowest frequency & minfreq & float & Hz & (0,$\infty$) & NaN\\
+Highest frequency & maxfreq & float & Hz & (0,$\infty$) & NaN\\
+Typical channel width & channelwidth & float & Hz & (0,$\infty$) & NaN\\
+Number of channels & Nchan & integer & -- & (0,$\infty$) & Any negative integer$^c$\\
+Full-width at half maximum of the RMSF & rmsf\_fwhm & float & rad m$^{-2}$ &[0,$\infty$) & NaN\\
+Typical per-channel noise in $Q,U^b$ & noise\_chan & float & Jy or Jy/beam & [0,$\infty$) & NaN \\
+Name of Telescope(s)$^a$ & telescope & string(80) & -- & -- & `Unknown'\\
+Integration time & int\_time & float & s & [0,$\infty$) & NaN \\
+Median epoch of observation & epoch & float & days & (-$\infty$,$\infty$) & NaN\\
+Interval of observation & interval & float & days & [0,$\infty$) & NaN \\
+Instrumental leakage estimate & leakage & float & -- & [0,$\infty$) & NaN\\
+Distance from beam centre & beamdist & float & deg &[0,$\infty$) & NaN\\
+\multicolumn{6}{c}{\bf Miscellaneous:}\\
+Name of catalog & catalog & string(40) & -- & -- & Essential\\
+Data references & dataref & string(400) & -- & -- & `'\\
+Source ID in catalog & cat\_id & string(40) & -- & -- & `'\\
+Source classification$^a$ & type & string(40) & -- & -- & `'\\
+Notes & notes & string(200) & -- & -- & `'\\
+\enddata
+\tablecomments{Columns marked as essential are required to have a value and cannot be blank.\\
+See text for additional notes on some columns.\\
+$^a$: These columns have a list of suggested values to encourage standardization.\\
+$^b$: All Stokes parameters can be either flux densities or intensities.\\
+$^c$: Since NaN is not generally defined for integers, a negative integer should be used to represent missing data. The default behaviour in Python is to replace NaNs with -2147483648, so this value is generally used in RMTables generated by Python.}
+\end{deluxetable*}
+
+
+
+
+
+% \clearpage
+
+\bibliography{References}{} % your references Yourfile.bib
+\bibliographystyle{aasjournal} % style aa.bst 
+
+
+
+
+\end{document}  
