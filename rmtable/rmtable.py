@@ -153,7 +153,11 @@ class RMTable(Table):
                 else:
                     warnings.warn(f"Could not find a fill value for {col} - using None")
                     fill_value = None
-                new_col = self[col].filled(fill_value=fill_value)
+                try:
+                    new_col = self[col].filled(fill_value=fill_value)
+                except TypeError:
+                    warnings.warn(f"Could not fill '{col}' (dtype {self[col].dtype}) with '{fill_value}' - using None")
+                    new_col = self[col].filled(fill_value=None)
                 self[col] = new_col
 
     def write_votable(self, filename, *args, **kwargs):
