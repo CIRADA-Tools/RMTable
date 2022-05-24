@@ -104,6 +104,7 @@ class RMTable(Table):
         # clears the meta attributes.
         ret = super()._new_from_slice(slice_)
         ret._add_ucds()
+        ret._add_descriptions()
         ret._set_rmtab_attrs()
         return ret
 
@@ -111,9 +112,14 @@ class RMTable(Table):
         """Adds ucds to the meta of each column."""
         for col in self.columns:
             # Check if ucd has already been set
-            if not "ucd" in self[col].meta:
+            if not "ucd" in self[col].meta or self[col].meta["ucd"] is None:
                 # If not, set it from the standard
                 if col in self.standard_columns:
+                    if self[col].meta["ucd"] is None:
+                        # Issue a warning here if the ucd set to None
+                        warnings.warn(
+                            f"Empty ucd for column '{col}', replacing with standard '{self.standard[col]['ucd']}'"
+                        )
                     self[col].meta["ucd"] = self.standard[col]["ucd"]
                 else:
                     self[col].meta["ucd"] = None
@@ -122,8 +128,11 @@ class RMTable(Table):
         """Adds descriptions to each column."""
         for col in self.columns:
             # Check if description has already been set
-            if col in self.standard_columns and self[col].description is not None:
-                self[col].description = self.standard_descriptions[col]
+            if col in self.standard_columns and self[col].description is None:
+                    warnings.warn(
+                        f"Empty description for column '{col}', replacing with standard '{self.standard[col]['description']}'"
+                    )
+                    self[col].description = self.standard_descriptions[col]
 
     def read(*args, **kwargs):
         """Reads in a table from a file."""
@@ -190,10 +199,12 @@ class RMTable(Table):
             self.units[colname] = col.unit
             self[colname].unit = col.unit
         if hasattr(col, "meta"):
-            assert ucd is None, "Cannot specify both ucd and ucd in column"
-            self.ucds[colname] = col.meta["ucd"]
-            self[colname].meta["ucd"] = col.meta["ucd"]
+            if "ucd" in col.meta:
+                assert ucd is None, "Cannot specify both ucd and ucd in column"
+                self.ucds[colname] = col.meta["ucd"]
+                self[colname].meta["ucd"] = col.meta["ucd"]
         self._add_ucds()
+        self._add_descriptions()
         return ret
 
     def add_columns(
@@ -205,9 +216,11 @@ class RMTable(Table):
             if hasattr(col, "unit"):
                 self.units[col.name] = col.unit
             if hasattr(col, "meta"):
-                self.ucds[col.name] = col.meta["ucd"]
+                if "ucd" in col.meta:
+                    self.ucds[col.name] = col.meta["ucd"]
 
         self._add_ucds()
+        self._add_descriptions()
         return ret
 
     def remove_column(self, name):
@@ -324,7 +337,7 @@ class RMTable(Table):
             )
             print(*invalid_complexity_test, sep="\n")
         invalid_ionosphere = []
-        for entry in self.table["ionosphere"]:
+        for entry in self["ionosphere"]:
             if (entry not in self.standard_ionosphere) and (
                 entry not in invalid_ionosphere
             ):
