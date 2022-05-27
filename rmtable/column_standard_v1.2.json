@@ -1,0 +1,559 @@
+{
+    "ra": {
+        "dtype": "f8",
+        "limits": [
+            0,
+            360
+        ],
+        "blank": null,
+        "units": "deg",
+        "ucd": "pos.eq.ra;meta.main",
+        "description": "Right Ascension [ICRS]"
+    },
+    "dec": {
+        "dtype": "f8",
+        "limits": [
+            -90,
+            90
+        ],
+        "blank": null,
+        "units": "deg",
+        "ucd": "pos.eq.dec;meta.main",
+        "description": "Declination [ICRS]"
+    },
+    "l": {
+        "dtype": "f8",
+        "limits": [
+            0,
+            360
+        ],
+        "blank": null,
+        "units": "deg",
+        "ucd": "pos.galactic.lon",
+        "description": "Galactic Longitude"
+    },
+    "b": {
+        "dtype": "f8",
+        "limits": [
+            -90,
+            90
+        ],
+        "blank": null,
+        "units": "deg",
+        "ucd": "pos.galactic.lat",
+        "description": "Galactic Latitude"
+    },
+    "pos_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "stat.error;pos",
+        "description": "Position uncertainty"
+    },
+    "rm": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2",
+        "ucd": "phys.polarization.rotMeasure;meta.main",
+        "description": "Rotation measure"
+    },
+    "rm_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2",
+        "ucd": "stat.error;phys.polarization.rotMeasure",
+        "description": "Error in RM"
+    },
+    "rm_width": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2",
+        "ucd": "phys.polarization.rotMeasure;stat.fwhm",
+        "description": "Width in Faraday depth"
+    },
+    "rm_width_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2",
+        "ucd": "stat.error;phys.polarization.rotMeasure;stat.fwhm",
+        "description": "Error in width"
+    },
+    "complex_flag": {
+        "dtype": "U1",
+        "limits": "",
+        "blank": "U",
+        "units": "",
+        "ucd": "meta.code",
+        "description": "Faraday complexity flag"
+    },
+    "complex_test": {
+        "dtype": "U80",
+        "limits": "",
+        "blank": "",
+        "units": "",
+        "ucd": "meta.note",
+        "description": "Faraday complexity metric"
+    },
+    "rm_method": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": "",
+        "ucd": "meta.note",
+        "description": "RM determination method"
+    },
+    "ionosphere": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": "",
+        "ucd": "meta.note",
+        "description": "Ionospheric correction method"
+    },
+    "Ncomp": {
+        "dtype": "i4",
+        "limits": [
+            1, Infinity
+        ],
+        "blank": 1,
+        "units": "",
+        "ucd": "meta.number",
+        "description": "Number of RM components"
+    },
+    "stokesI": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "phot.flux.density;phys.polarization.stokes.I",
+        "description": "Stokes I"
+    },
+    "stokesI_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "stat.error;phot.flux.density;phys.polarization.stokes.I",
+        "description": "Error in Stokes I"
+    },
+    "spectral_index": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "",
+        "ucd": "spect.index",
+        "description": "Stokes I spectral index"
+    },
+    "spectral_index_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "",
+        "ucd": "stat.error;spect.index",
+        "description": "Error in spectral index"
+    },
+    "reffreq_I": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz",
+        "ucd": "em.freq;phys.polarization.stokes.I",
+        "description": "Reference frequency for Stokes I"
+    },
+    "polint": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "phot.flux.density;phys.polarization.linear",
+        "description": "Polarized intensity"
+    },
+    "polint_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "stat.error;phot.flux.density;phys.polarization.linear",
+        "description": "Error in Pol.Int."
+    },
+    "pol_bias": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": "",
+        "ucd": "meta.note",
+        "description": "Polarization bias correction method"
+    },
+    "flux_type": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "Unknown",
+        "units": "",
+        "ucd": "meta.note",
+        "description": "Stokes extraction method"
+    },
+    "aperture": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "phys.angSize",
+        "description": "Integration aperture"
+    },
+    "fracpol": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "",
+        "ucd": "phys.polarization.linear",
+        "description": "Fractional (linear) polarization"
+    },
+    "fracpol_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "",
+        "ucd": "stat.error;phys.polarization.linear",
+        "description": "Error in fractional polarization"
+    },
+    "polangle": {
+        "dtype": "f4",
+        "limits": [
+            0,
+            180
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "pos.posAng;phys.polarization.linear",
+        "description": "Electric vector polarization angle"
+    },
+    "polangle_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "stat.error;pos.posAng;phys.polarization.linear",
+        "description": "Error in EVPA"
+    },
+    "reffreq_pol": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz",
+        "ucd": "em.freq;phys.polarization",
+        "description": "Reference frequency for polarization"
+    },
+    "stokesQ": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "phot.flux.density;phys.polarization.stokes.Q",
+        "description": "Stokes Q"
+    },
+    "stokesQ_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "stat.error;phot.flux.density;phys.polarization.stokes.Q",
+        "description": "Error in Stokes Q"
+    },
+    "stokesU": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "phot.flux.density;phys.polarization.stokes.U",
+        "description": "Stokes U"
+    },
+    "stokesU_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "stat.error;phot.flux.density;phys.polarization.stokes.U",
+        "description": "Error in Stokes U"
+    },
+    "derot_polangle": {
+        "dtype": "f4",
+        "limits": [
+            0,
+            180
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "pos.posAng;phys.polarization.linear",
+        "description": "De-rotated EVPA"
+    },
+    "derot_polangle_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "stat.error;pos.posAng;phys.polarization.linear",
+        "description": "Error in De-rotated EVPA"
+    },
+    "stokesV": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "phot.flux.density;phys.polarization.stokes.U",
+        "description": "Stokes V"
+    },
+    "stokesV_err": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "stat.error;phot.flux.density;phys.polarization.stokes.U",
+        "description": "Error in Stokes V"
+    },
+    "beam_maj": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "pos.angResolution;instr.beam;phys.angSize.smajAxis",
+        "description": "Beam major axis"
+    },
+    "beam_min": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "pos.angResolution;instr.beam;phys.angSize.sminAxis",
+        "description": "Beam minor axis"
+    },
+    "beam_pa": {
+        "dtype": "f4",
+        "limits": [
+            0,
+            180
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "pos.angResolution;instr.beam;pos.posAng",
+        "description": "Beam position angle"
+    },
+    "reffreq_beam": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz",
+        "ucd": "em.freq;instr.beam",
+        "description": "Reference frequency for beam"
+    },
+    "minfreq": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz",
+        "ucd": "em.freq;stat.min",
+        "description": "Lowest frequency"
+    },
+    "maxfreq": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz",
+        "ucd": "em.freq;stat.max",
+        "description": "Highest frequency"
+    },
+    "channelwidth": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Hz",
+        "ucd": "em.freq;instr.bandwidth",
+        "description": "Typical channel width"
+    },
+    "Nchan": {
+        "dtype": "i4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": -2147483648,
+        "units": "",
+        "ucd": "meta.number",
+        "description": "Number of channels"
+    },
+    "rmsf_fwhm": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "rad.m-2",
+        "ucd": "instr.rmsf;stat.fwhm",
+        "description": "Full-width at half maximum of the RMSF"
+    },
+    "noise_chan": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "Jy",
+        "ucd": "stat.error;instr.det.noise",
+        "description": "Typical per-channel noise in Q;U"
+    },
+    "telescope": {
+        "dtype": "U80",
+        "limits": "",
+        "blank": "Unknown",
+        "units": "",
+        "ucd": "instr.tel",
+        "description": "Name of Telescope(s)"
+    },
+    "int_time": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "s",
+        "ucd": "time.duration;obs.exposure",
+        "description": "Integration time"
+    },
+    "epoch": {
+        "dtype": "f4",
+        "limits": [-Infinity, Infinity
+        ],
+        "blank": NaN,
+        "units": "day",
+        "ucd": "time.epoch",
+        "description": "Median epoch of observation"
+    },
+    "interval": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "day",
+        "ucd": "time.interval",
+        "description": "Interval of observation"
+    },
+    "leakage": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "",
+        "ucd": "phys.polarization.linear",
+        "description": "Instrumental leakage estimate"
+    },
+    "beamdist": {
+        "dtype": "f4",
+        "limits": [
+            0, Infinity
+        ],
+        "blank": NaN,
+        "units": "deg",
+        "ucd": "pos.angDistance;instr.beam",
+        "description": "Distance from beam centre - taken as centre of tile"
+    },
+    "catalog": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": null,
+        "units": "",
+        "ucd": "meta.note",
+        "description": "Name of catalog"
+    },
+    "dataref": {
+        "dtype": "U400",
+        "limits": "",
+        "blank": "",
+        "units": "",
+        "ucd": "meta.bib.bibcode",
+        "description": "Data references"
+    },
+    "cat_id": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "",
+        "units": "",
+        "ucd": "meta.id",
+        "description": "Source ID in catalog"
+    },
+    "type": {
+        "dtype": "U40",
+        "limits": "",
+        "blank": "",
+        "units": "",
+        "ucd": "src.class",
+        "description": "Source classification"
+    },
+    "notes": {
+        "dtype": "U200",
+        "limits": "",
+        "blank": "",
+        "units": "",
+        "ucd": "meta.note",
+        "description": "Notes"
+    },
+    "version": "1.2"
+}

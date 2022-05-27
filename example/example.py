@@ -9,11 +9,12 @@ Created on Fri Apr 26 09:42:09 2019
 """
 
 import numpy as np
-import rmtable as RMT
+from rmtable import RMTable
+from astropy.coordinates import SkyCoord
 
 
 #Reading in an RMTable from FITS:
-catalog=RMT.read_FITS('VanEck2011_table.fits')
+catalog=RMTable.read('VanEck2011_table.fits')
 print(catalog)
 
 #Get the list of columns present in table:
@@ -25,7 +26,10 @@ print(len(catalog))
 
 #Access column(s):
 print(catalog['rm'])
+# Note here that missing columns will always be added
 print(catalog['l','b','rm','rm_err'])
+# Instead you can covert back to a standard table
+print(catalog.to_table()['l','b','rm','rm_err'])
 
 #Access row(s):
 print(catalog[0:10])
@@ -37,14 +41,14 @@ print(catalog[selection])
 #Multiple selections are combined using numpy's logical_and function.
 
 
-#If you prefer numpy arrays or pandas dataframes, convert to those:
-print(catalog.to_numpy())
+#If you prefer numpy arrays or pandas dataframes, convert to those
+print(catalog.as_array())
 print(catalog.to_pandas())
 
 
 #Saving a sub-catalog:
 subcatalog=catalog[selection]
-subcatalog.write_FITS('subcatalog.fits',overwrite=True)
+subcatalog.write('subcatalog.fits',overwrite=True)
 
 
 
@@ -76,7 +80,7 @@ dec_strings=np.char.add(cat['dec_sign'],
                         np.char.add(np.char.add(np.char.add(cat['decd'].astype(str),'d'),
                                                 np.char.add(cat['decm'].astype(str),'m')),
                                                 np.char.add(cat['decs'].astype(str),'s')))
-coords=ac.SkyCoord(ra_strings,dec_strings,frame='fk5')
+coords=SkyCoord(ra_strings,dec_strings,frame='fk5')
 #Adding final decimal coordinate columns in to the numpy table:
 cat=np.lib.recfunctions.append_fields(cat,['ra','dec'],[coords.ra.deg,coords.dec.deg])
 
@@ -89,8 +93,8 @@ cat['stokesI']=cat['stokesI']/1e3
 
 #Step 3: convert to RMTable. It will automatically identify which columns are
 #        part of the standard and which are not, based on the column names.
-table=RMT.input_numpy(cat,verbose=True,verify=True,coordinate_system='fk5')
-#If verbose=True, it will report which columns were used or ignored, and which
+table = RMTable(cat)
+#Tt will report which columns were used or ignored, and which
 #are missing and filled with blanks.
 #If verify=True, it will check that the numerical values are as expected.
 #This typically means things like angle conventions (i.e. polarization angles 
@@ -115,13 +119,13 @@ table['int_time']=120
 
 #The following lines check the table values for conformance with the standard
 # (within limits, and using standard string values where applicable).
+table.add_missing_columns()
 table.verify_limits()
 table.verify_standard_strings()
 
 
-#Step 5: Save the RMTable. Available formats are FITS and tsv. CSV is not allowed
-#   in case any string contain commas.
-table.write_FITS('VanEck2011_table.fits',overwrite=True)
+#Step 5: Save the RMTable. All formats supported by astropy are supported.
+table.write('VanEck2011_table.fits',overwrite=True)
 
 
 
