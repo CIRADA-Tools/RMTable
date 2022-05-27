@@ -28,8 +28,6 @@ print(len(catalog))
 print(catalog['rm'])
 # Note here that missing columns will always be added
 print(catalog['l','b','rm','rm_err'])
-# Instead you can covert back to a standard table
-print(catalog.to_table()['l','b','rm','rm_err'])
 
 #Access row(s):
 print(catalog[0:10])
@@ -93,7 +91,8 @@ cat['stokesI']=cat['stokesI']/1e3
 
 #Step 3: convert to RMTable. It will automatically identify which columns are
 #        part of the standard and which are not, based on the column names.
-table = RMTable(cat)
+##table = RMTable(cat)
+table=RMTable().input_numpy(cat,verbose=True,verify=True,coordinate_system='fk5')
 #Tt will report which columns were used or ignored, and which
 #are missing and filled with blanks.
 #If verify=True, it will check that the numerical values are as expected.
@@ -119,7 +118,7 @@ table['int_time']=120
 
 #The following lines check the table values for conformance with the standard
 # (within limits, and using standard string values where applicable).
-table.add_missing_columns()
+table.verify_columns()
 table.verify_limits()
 table.verify_standard_strings()
 
