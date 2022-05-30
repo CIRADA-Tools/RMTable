@@ -129,10 +129,10 @@ class RMTable(Table):
         for col in self.columns:
             # Check if description has already been set
             if col in self.standard_columns and self[col].description is None:
-                    warnings.warn(
-                        f"Empty description for column '{col}', replacing with standard '{self.standard[col]['description']}'"
-                    )
-                    self[col].description = self.standard_descriptions[col]
+                warnings.warn(
+                    f"Empty description for column '{col}', replacing with standard '{self.standard[col]['description']}'"
+                )
+                self[col].description = self.standard_descriptions[col]
 
     def read(*args, **kwargs):
         """Reads in a table from a file."""
@@ -156,7 +156,9 @@ class RMTable(Table):
                 try:
                     new_col = self[col].filled(fill_value=fill_value)
                 except TypeError:
-                    warnings.warn(f"Could not fill '{col}' (dtype {self[col].dtype}) with '{fill_value}' - using None")
+                    warnings.warn(
+                        f"Could not fill '{col}' (dtype {self[col].dtype}) with '{fill_value}' - using None"
+                    )
                     new_col = self[col].filled(fill_value=None)
                 self[col] = new_col
 
@@ -172,8 +174,10 @@ class RMTable(Table):
         """Reads a table from a tsv file."""
         return RMTable.read(filename, *args, **kwargs, format="ascii.tab")
 
-    def input_numpy(self,array,verbose=False,verify=True,keep_cols=[],
-                    coordinate_system='icrs'):
+    @classmethod
+    def input_numpy(
+        cls, array, verbose=False, verify=True, keep_cols=[], coordinate_system="icrs"
+    ):
         """Converts an input numpy array into an RM table object.
         Requires that array has named columns matching standard column names.
         Will automatically fill in missing columns with default values.
@@ -183,107 +187,120 @@ class RMTable(Table):
                           verify (Boolean): check if values conform to standard.
                           keep_cols (list): List of extra columns to keep.
                           coordinate_system (str): name of coordinate frame for
-                                                   ra and dec columns 
+                                                   ra and dec columns
                                                    (typically 'fk5' or 'icrs')
-       """
-        
-        Nrows=array.size
+        """
 
-        #This function needs to:
-        #Check that columns in ndarray have correct names, and no extra columns are present. (case senstitive?)
-        #Check for missing essential columns?
-        #Build new table, mapping correct input columns and adding appropriate blanks.
-        #Generate second coordinate system if missing. 
-        
-        #Check for missing keep_col entries, and stop if they're not present in the array.
-        missing_keep_cols=[ column for column in keep_cols if column not in array.dtype.names ]
+        Nrows = array.size
+        self = cls()
+
+        # This function needs to:
+        # Check that columns in ndarray have correct names, and no extra columns are present. (case senstitive?)
+        # Check for missing essential columns?
+        # Build new table, mapping correct input columns and adding appropriate blanks.
+        # Generate second coordinate system if missing.
+
+        # Check for missing keep_col entries, and stop if they're not present in the array.
+        missing_keep_cols = [
+            column for column in keep_cols if column not in array.dtype.names
+        ]
         if len(missing_keep_cols) > 0:
-            print('The following columns cannot be kept. Check spelling!')
-            print(*missing_keep_cols,sep=',')
+            print("The following columns cannot be kept. Check spelling!")
+            print(*missing_keep_cols, sep=",")
             raise RuntimeError()
 
-        newtable=[None] * len(self.standard_columns)   
-        array_columns=array.dtype.names
-        matching_columns=[]  #Track 'good' columns in input array
-        additional_columns=[]  #Track 'useless' columns in input array
-        missing_columns=list(self.standard_columns).copy()  #Track columns not present in table
+        newtable = [None] * len(self.standard_columns)
+        array_columns = array.dtype.names
+        matching_columns = []  # Track 'good' columns in input array
+        additional_columns = []  # Track 'useless' columns in input array
+        missing_columns = list(
+            self.standard_columns
+        ).copy()  # Track columns not present in table
         for col in array_columns:
-            if col in self.standard_columns:  #Put the matching columns in the correct places
+            if (
+                col in self.standard_columns
+            ):  # Put the matching columns in the correct places
                 matching_columns.append(col)
                 missing_columns.remove(col)
-                newtable[self.standard_columns.index(col)]=array[col]
+                newtable[self.standard_columns.index(col)] = array[col]
             elif col in keep_cols:
                 pass
             else:
                 additional_columns.append(col)
-        
-        #Report extraneous columns:
+
+        # Report extraneous columns:
         if verbose:
-            print('Incorporated columns:')
-            print(*matching_columns,sep='\n')
+            print("Incorporated columns:")
+            print(*matching_columns, sep="\n")
             print()
 
-            print('Unused columns (check for spelling/capitalization errors!):')
-            print(*additional_columns,sep='\n')
+            print("Unused columns (check for spelling/capitalization errors!):")
+            print(*additional_columns, sep="\n")
             print()
-        #Check frame and convert to ICRS if needed, overwriting the ra and dec columns:
-        if ('ra' in matching_columns) and (coordinate_system != 'icrs'):
-            print(f'Converting coordinates from {coordinate_system}.\n')
-            coords=SkyCoord(array['ra'],array['dec'],frame=coordinate_system,
-                               unit='deg')
-            array['ra']=coords.icrs.ra.deg
-            array['dec']=coords.icrs.dec.deg
-        
-        
-        #Check position columns, generate missing ones
-        if ('ra' in matching_columns) and ('l' in matching_columns):
-            pass  #Both present, all is well.
-        elif ('ra' in matching_columns) and ('l' not in matching_columns):
-            #calculate Galactic:
-            long,lat=calculate_missing_coordinates_column(array['ra'],array['dec'],True)
-            newtable[self.standard_columns.index('l')]=long
-            newtable[self.standard_columns.index('b')]=lat
-            matching_columns.append('l')
-            missing_columns.remove('l')
-            matching_columns.append('b')
-            missing_columns.remove('b')
-        elif ('ra' not in matching_columns) and ('l' in matching_columns):
-            #calculate Equatorial
-            long,lat=calculate_missing_coordinates_column(array['l'],array['b'],False)
-            newtable[self.standard_columns.index('ra')]=long
-            newtable[self.standard_columns.index('dec')]=lat                          
-            matching_columns.append('ra')
-            missing_columns.remove('ra')
-            matching_columns.append('dec')
-            missing_columns.remove('dec')
+        # Check frame and convert to ICRS if needed, overwriting the ra and dec columns:
+        if ("ra" in matching_columns) and (coordinate_system != "icrs"):
+            print(f"Converting coordinates from {coordinate_system}.\n")
+            coords = SkyCoord(
+                array["ra"], array["dec"], frame=coordinate_system, unit="deg"
+            )
+            array["ra"] = coords.icrs.ra.deg
+            array["dec"] = coords.icrs.dec.deg
+
+        # Check position columns, generate missing ones
+        if ("ra" in matching_columns) and ("l" in matching_columns):
+            pass  # Both present, all is well.
+        elif ("ra" in matching_columns) and ("l" not in matching_columns):
+            # calculate Galactic:
+            long, lat = cls.calculate_missing_coordinates_column(
+                array["ra"], array["dec"], True
+            )
+            newtable[self.standard_columns.index("l")] = long
+            newtable[self.standard_columns.index("b")] = lat
+            matching_columns.append("l")
+            missing_columns.remove("l")
+            matching_columns.append("b")
+            missing_columns.remove("b")
+        elif ("ra" not in matching_columns) and ("l" in matching_columns):
+            # calculate Equatorial
+            long, lat = cls.calculate_missing_coordinates_column(
+                array["l"], array["b"], False
+            )
+            newtable[self.standard_columns.index("ra")] = long
+            newtable[self.standard_columns.index("dec")] = lat
+            matching_columns.append("ra")
+            missing_columns.remove("ra")
+            matching_columns.append("dec")
+            missing_columns.remove("dec")
         else:
-            print('No position columns found in input table! Make sure RA/Dec or l/b columns haven\'t been lost!')
+            print(
+                "No position columns found in input table! Make sure RA/Dec or l/b columns haven't been lost!"
+            )
             raise RuntimeError()
-        
-        #Create missing columns with blank values:
+
+        # Create missing columns with blank values:
         print("Missing columns (filling with blanks):")
         for col in missing_columns:
-            newtable[self.standard_columns.index(col)]=np.repeat(self.standard_blanks[col],Nrows)
+            newtable[self.standard_columns.index(col)] = np.repeat(
+                self.standard_blanks[col], Nrows
+            )
             print(col)
         print()
-        
-        newrows=Table(data=np.array(newtable).transpose(),names=self.standard_columns,dtype=self.standard_dtypes.values())
-        #Remake RMTable with the compiled table.        
-        self=RMTable(newrows)
-        
-        
-        #Add kept columns:
+
+        newrows = cls(
+            data=np.array(newtable).transpose(),
+            names=self.standard_columns,
+            dtype=self.standard_dtypes.values(),
+        )
+
+        # Add kept columns:
         for column in keep_cols:
-            self.add_column(array[column],column)
-    
-        if verify==True:
-            self.verify_limits()
-            self.verify_standard_strings()
-        
-        
-        return self
+            newrows.add_column(array[column], column)
 
+        if verify == True:
+            newrows.verify_limits()
+            newrows.verify_standard_strings()
 
+        return newrows
 
     def add_column(
         self,
@@ -350,19 +367,24 @@ class RMTable(Table):
             del self.units[name]
             del self.ucds[name]
         return super().remove_columns(names)
-    
+
     def verify_columns(self):
         """Checks columns against standard, reporting missing or additional columns."""
         if self.standard_columns != self.colnames:
-            print("Columns inconsistent with standard. Check if deliberate (i.e., verify these aren't misspellings).")
-            extra_columns=[ column for column in self.columns if column not in self.standard_columns ]
-            missing_columns=[ column for column in self.standard_columns if column not in self.columns ]
-            print('Extra columns: ',end='')
+            print(
+                "Columns inconsistent with standard. Check if deliberate (i.e., verify these aren't misspellings)."
+            )
+            extra_columns = [
+                column for column in self.columns if column not in self.standard_columns
+            ]
+            missing_columns = [
+                column for column in self.standard_columns if column not in self.columns
+            ]
+            print("Extra columns: ", end="")
             print(extra_columns)
-            print('Missing columns: ',end='')
+            print("Missing columns: ", end="")
             print(missing_columns)
-            #print(set(self.table.colnames).symmetric_difference(set(self.standard_columns)))
-
+            # print(set(self.table.colnames).symmetric_difference(set(self.standard_columns)))
 
     def verify_limits(self):
         """This function checks that all numerical columns conform to the
@@ -515,61 +537,37 @@ class RMTable(Table):
         """Returns the table object."""
         return Table(self)
 
+    @staticmethod
+    def calculate_missing_coordinates_column(long, lat, to_galactic):
+        """Calculate a new pair of coordinate columns (equatorial/galactic) given
+        the other pair and specified direction. Assumes input columns are already
+        in degrees.
+        Uses astropy coordinates for the transform.
+        Input parameters:
+            long: longitude column (ra/l)
+            lat: latitude column (dec,b)
+            to_galactic  (Boolean): direction of calculation: True = Equatorial -> Galactic, False = Galactic -> Equatorial
+        Outputs: two arrays, new_long and new_lat
+        """
+        if to_galactic:
+            sc = SkyCoord(long, lat, frame="icrs", unit=(au.deg, au.deg))
+            new_long = sc.galactic.l.deg
+            new_lat = sc.galactic.b.deg
+        else:
+            sc = SkyCoord(long, lat, frame="galactic", unit=(au.deg, au.deg))
+            new_long = sc.icrs.ra.deg
+            new_lat = sc.icrs.dec.deg
 
-def calculate_missing_coordinates_column(long, lat, to_galactic):
-    """Calculate a new pair of coordinate columns (equatorial/galactic) given
-    the other pair and specified direction. Assumes input columns are already
-    in degrees.
-    Uses astropy coordinates for the transform.
-    Input parameters:
-        long: longitude column (ra/l)
-        lat: latitude column (dec,b)
-        to_galactic  (Boolean): direction of calculation: True = Equatorial -> Galactic, False = Galactic -> Equatorial
-    Outputs: two arrays, new_long and new_lat
-    """
-    if to_galactic:
-        sc = SkyCoord(long, lat, frame="icrs", unit=(au.deg, au.deg))
-        new_long = sc.galactic.l.deg
-        new_lat = sc.galactic.b.deg
-    else:
-        sc = SkyCoord(long, lat, frame="galactic", unit=(au.deg, au.deg))
-        new_long = sc.icrs.ra.deg
-        new_lat = sc.icrs.dec.deg
+        return new_long, new_lat
 
-    return new_long, new_lat
+    @staticmethod
+    def convert_angles(angles):
+        """Converts an array of angles to follow the [0,180) degree convention
+        used in the RMTable standard.
+        Inputs: angles (array-like): angles (in degrees)
+        Returns: array of angles (in degrees) in the range [0,180)
+        """
+        # Multiple of 180° that should be added to force all values to be positive
+        n = np.ceil(np.abs(np.min(angles)) / 180)
 
-
-def convert_angles(angles):
-    """Converts an array of angles to follow the [0,180) degree convention
-    used in the RMTable standard.
-    Inputs: angles (array-like): angles (in degrees)
-    Returns: array of angles (in degrees) in the range [0,180)
-    """
-    # Multiple of 180° that should be added to force all values to be positive
-    n = np.ceil(np.abs(np.min(angles)) / 180)
-
-    return np.mod(angles + 180 * n, 180)
-
-
-
-
-def input_numpy(array,verbose=False,verify=False,keep_cols=[],coordinate_system='icrs'):
-    """Converts an input numpy array into an RM table object.
-    Requires that array has named columns matching standard column names.
-    Will automatically fill in missing columns with default values.
-    Non-standard columns listed in keep_cols will be kept, otherwise they will be discarded.
-    Input parameters: array (numpy ndarray): array to transform.
-                       verbose (Boolean): report missing columns
-                       verify (Boolean): check if values conform to standard.
-                       keep_cols (list): List of extra columns to keep.
-                       coordinate_system (str): name of coordinate frame for
-                                                ra and dec columns 
-                                                (typically 'fk5' or 'icrs')
-    """
-
-    cat=RMTable()
-    cat.input_numpy(array,verbose=verbose,verify=verify,keep_cols=keep_cols,
-                    coordinate_system=coordinate_system)
-    return cat
-input_numpy.__doc__=RMTable.input_numpy.__doc__
-
+        return np.mod(angles + 180 * n, 180)
