@@ -26,7 +26,6 @@ print(len(catalog))
 
 #Access column(s):
 print(catalog['rm'])
-# Note here that missing columns will always be added
 print(catalog['l','b','rm','rm_err'])
 
 #Access row(s):
@@ -92,7 +91,7 @@ cat['stokesI']=cat['stokesI']/1e3
 #Step 3: convert to RMTable. It will automatically identify which columns are
 #        part of the standard and which are not, based on the column names.
 ##table = RMTable(cat)
-table=RMTable().input_numpy(cat,verbose=True,verify=True,coordinate_system='fk5')
+table=RMTable.input_numpy(cat,verbose=True,verify=True,coordinate_system='fk5')
 #Tt will report which columns were used or ignored, and which
 #are missing and filled with blanks.
 #If verify=True, it will check that the numerical values are as expected.
