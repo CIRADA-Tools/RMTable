@@ -60,7 +60,7 @@
 
 
 1.0.0:
-    Created VOTable version of catalog.
+    Created VOTable version of catalog. Updated full consolidated catalog to be compatible with code changes (adding UCDs, units, etc).
     No changes to contents of catalog.
     Updating to version 1 in anticipation of no further major changes before publication.
     Changed values:
