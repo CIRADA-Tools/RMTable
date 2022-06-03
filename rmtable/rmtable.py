@@ -1,5 +1,6 @@
 import numpy as np
 from astropy.table import Table, Column, MaskedColumn
+from astropy.io import votable as vot
 from astropy.coordinates import SkyCoord
 import astropy.units as au
 import json
@@ -511,6 +512,18 @@ class RMTable(Table):
             == 0
         ):
             print("No problems found with standardized string entries.")
+
+
+    def verify_ucds(self):
+        """Confirm that all UCDs follow the expected conventions.
+        """
+        for colname, ucd in self.ucds.items():
+            check = vot.ucd.check_ucd(ucd)
+            if not check:
+                warnings.warning(f"{colname} has invalid ucd '{ucd}'")
+
+
+
 
     def add_missing_columns(self):
         """Adds in any missing default columns, with their default (blank) values.

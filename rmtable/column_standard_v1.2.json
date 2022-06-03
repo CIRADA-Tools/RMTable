@@ -536,7 +536,7 @@
         "limits": "",
         "blank": "",
         "units": "",
-        "ucd": "meta.id",
+        "ucd": "meta.id;meta.main",
         "description": "Source ID in catalog"
     },
     "type": {
