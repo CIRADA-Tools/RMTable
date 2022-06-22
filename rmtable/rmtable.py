@@ -87,7 +87,7 @@ class RMTable(Table):
         # Add ucds to meta of each column
         self._add_ucds()
         # Add descriptions to each column
-        self._add_descriptions()
+        self._add_descriptions(init=True)
         # These are for when extra columns might be added.
         # They point into the table where the columns can be found.
         self._set_rmtab_attrs()
@@ -105,7 +105,7 @@ class RMTable(Table):
         # clears the meta attributes.
         ret = super()._new_from_slice(slice_)
         ret._add_ucds()
-        ret._add_descriptions()
+        ret._add_descriptions(init=True)
         ret._set_rmtab_attrs()
         return ret
 
@@ -125,14 +125,16 @@ class RMTable(Table):
                 else:
                     self[col].meta["ucd"] = None
 
-    def _add_descriptions(self):
-        """Adds descriptions to each column."""
+    def _add_descriptions(self,init=False):
+        """Adds descriptions to each column.
+        init (bool): if true, disables warnings."""
         for col in self.columns:
             # Check if description has already been set
             if col in self.standard_columns and self[col].description is None:
-                warnings.warn(
-                    f"Empty description for column '{col}', replacing with standard '{self.standard[col]['description']}'"
-                )
+                if not init:
+                    warnings.warn(
+                        f"Empty description for column '{col}', replacing with standard '{self.standard[col]['description']}'"
+                    )
                 self[col].description = self.standard_descriptions[col]
 
     def read(*args, **kwargs):

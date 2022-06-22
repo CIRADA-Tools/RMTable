@@ -122,6 +122,12 @@ table.verify_limits()
 table.verify_standard_strings()
 
 
+#The package automatically adds all of the standard columns, filling any
+#columns not supplied with the default values:
+print(table['rmsf_fwhm'])
+print(table['dataref'])
+
+
 #Step 5: Save the RMTable. All formats supported by astropy are supported.
 table.write('VanEck2011_table.fits',overwrite=True)
 
