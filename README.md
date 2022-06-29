@@ -37,6 +37,10 @@ The list of individual catalogs/papers that have been incorporated into the cons
 
 ***
 
+### Suggestions for catalog authors (or those converting older catalogs)
+Given the large number of columns in the standard, it may seem to potential RM catalog authors that the process of generating a catalog in RMTable format could be more effort than is merited. The majority of the columns defined in the standard are optional and can be omitted or left blank without creating problems, although every column that is included increases the value of the catalog to future users. The key minimum elements that must be adhered to follow the RMTable standard are twofold: first, the standard columns that **are** included must use the naming convention and units of the standard (to avoid users being unable to combine catalogs, or combining catalogs with inconsistent units); second, any columns added that are outside the RMTable standard must not have a name conflict with any of the defined standard columns (e.g., a column labelled ``b'' would conflict with the Galactic Latitude column in RMTable). As long as those two conditions are satisfied, catalog authors have the freedom to choose how much effort they invest into including more of the standard columns. Using this package will automatically ensure both conditions are satisfied.
+
+
 Conversions of new catalogs into the RMTable format for inclusion into the consolidated catalog are very welcome. If you are interested in contributing a catalog to the consolidated catalog, or find any errors with the catalogs already included, please contact me.
 
 Cameron Van Eck (cameron.van.eck (at) utoronto.ca)
