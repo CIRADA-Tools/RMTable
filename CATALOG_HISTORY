@@ -65,3 +65,6 @@
     Updating to version 1 in anticipation of no further major changes before publication.
     Changed values:
         Rossetti 2008: 'flux_type' changed from 'Gaussian fit' to  'Gaussian fit - Peak' to match standard string.
+
+1.0.1:
+    Fixed problems with Riseley+ 2018 (POGS-I) catalog entries: rm and rm_err column had incorrect values, fracpol and error were missing, polint and error were in wrong units (mJy instead of Jy).
