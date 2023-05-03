@@ -17,3 +17,10 @@ The consolidated catalog doesn't really benefit from having those columns, so th
 The id column, intended to give a unique source numbering to the consolidated catalog, isn't needed.
 The aperture column, which describes over how large a sky area the brightness/RM was determined, was added.
 Some string lengths were modified to be more consistent.
+
+1.3 (Mar 2023)
+Renamed two columns that conflicted with SQL reserved keywords:
+    'catalog' became 'catalog_name'
+    'interval' became 'obs_interval'
+Removed string size specifications from string columns -- they can now be of
+dynamic lengths. The length requirements turned out to be entirely unnecessary.

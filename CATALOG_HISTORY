@@ -68,3 +68,6 @@
 
 1.0.1:
     Fixed problems with Riseley+ 2018 (POGS-I) catalog entries: rm and rm_err column had incorrect values, fracpol and error were missing, polint and error were in wrong units (mJy instead of Jy).
+
+1.1.0:
+    Converted tables to table format 1.3, which renames two of the columns to avoid SQL conflicts. No changes to contents of catalog.

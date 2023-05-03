@@ -24,7 +24,7 @@ A full description of the RMTable standard is currently located at
 https://docs.google.com/document/d/1lo-W89G1X7xGoMOPHYS5japxJKPDamjEJ9uIGnRPnpo/edit
 """
 
-__version__ = "1.2"
+__version__ = "1.3"
 
 # Reading in standard here so they are read on import
 # rather than on first use.
@@ -140,6 +140,7 @@ class RMTable(Table):
     def read(*args, **kwargs):
         """Reads in a table from a file."""
         table = RMTable(Table.read(*args, **kwargs))
+        table.update_version()
         return table
 
     def _unmask(self):
@@ -175,7 +176,10 @@ class RMTable(Table):
 
     def read_tsv(filename, *args, **kwargs):
         """Reads a table from a tsv file."""
-        return RMTable.read(filename, *args, **kwargs, format="ascii.tab")
+        table=RMTable.read(filename, *args, **kwargs, format="ascii.tab")
+        table.update_version()
+        return table
+
 
     @classmethod
     def input_numpy(
@@ -551,6 +555,45 @@ class RMTable(Table):
     def to_table(self):
         """Returns the table object."""
         return Table(self)
+
+
+
+    def update_version(self):
+        """Updates read-in tables with older versions to the most recent version.
+        This can't be done using the version number, since the version number
+        doesn't survive the read-write process. Must look for column names.
+        
+        Changes to be made:
+            v1.2: change interval column name to obs_interval
+                  change catalog column name to catalog_name
+            v1.1: Remove id, flagA/B/C_value, flagA/B/C_name columns
+            v1.0: Add rmsf_fwhm column"""
+            
+        #v1.0 updates:
+        if 'rmsf_fwhm' not in self.colnames:
+                self.add_column(
+                    Column(
+                        data=[self.standard_blanks['rmsf_fwhm']] * len(self),
+                        name='rmsf_fwhm',
+                        dtype=self.standard_dtypes['rmsf_fwhm'],
+                        unit=self.standard_units['rmsf_fwhm'],
+                        meta={"ucd": self.standard_ucds['rmsf_fwhm']},
+                    )
+                )
+
+        #v1.1 updates:
+        if 'flagA_value' in self.colnames:
+            self.remove_columns(['id','flagA_value','flagA_name',
+                                           'flagB_value','flagB_name',
+                                           'flagC_value','flagC_name'])
+            
+        #v1.2 updates:
+        if 'catalog' in self.colnames:
+            self.rename_column('catalog','catalog_name')
+            self.rename_column('interval','obs_interval')
+
+            
+        
 
     @staticmethod
     def calculate_missing_coordinates_column(long, lat, to_galactic):
