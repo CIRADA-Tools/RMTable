@@ -15,10 +15,9 @@ Several of the RMTable columns are for descriptive strings (for example, the sou
 
 
 \begin{table}[h]
-\caption{Standard values for RM determination method (`rm\_method')}\label{tab:rm_method}
+\caption{Standard values for RM determination method}\label{tab:rm_method}
 \begin{center}
-\begin{tabular}{|l|p{0.6\linewidth}|} \hline
-
+\begin{tabular}{|l|p{0.5\linewidth}|} \hline
 {\bf Standard value:} & {\bf Notes:} \\ \hline
 Unknown & Default value if not specified.\\
 EVPA-linear fit & Linear regression of polarization angle as function of wavelength-squared.\\
@@ -40,7 +39,7 @@ QUfit - Multiple & QU-fitting to a model that is a combination of different mode
 
 
 \begin{table}[h]
-\caption{Standard values for Faraday complexity metric (`complex\_test')}\label{tab:complex_test}
+\caption{Standard values for Faraday complexity metric}\label{tab:complex_test}
 \begin{center}
 \begin{tabular}{|l|p{0.6\linewidth}|} \hline
 {\bf Standard value:} & {\bf Notes:} \\ \hline
@@ -52,40 +51,42 @@ QU-fitting & QU-fitting of Faraday complex model.\\
 Inspection & Visual inspection of FDF for deviations from Faraday-simple response.\\
 Machine learning - Alger 2021 & Machine learning algorithm developed by \citet{Alger2021}.\\
 Convolutional neural networks - Brown 2019 & Convolutional neural network algorithm developed by \citet{Brown2019}.\\
-QU-fit \& BIC & Bayesian Information Criterion applied to QU-fitting model (comparing simple vs complex models).\\
-\hline
+QU-fit \& BIC & Bayesian Information Criterion applied to QU-fitting model (comparing simple vs complex models). \\
+ \hline
 \end{tabular}
 \end{center}
 \label{default}
 \end{table}%
 
 
-
 \begin{table}[h]
-\caption{Standard values for ionospheric Faraday rotation correction method (`ionosphere')}\label{tab:ionosphere}
+\caption{Standard values for ionospheric Faraday rotation  correction method}\label{tab:ionosphere}
 \begin{center}
-\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+\begin{tabular}{|l|p{0.7\linewidth}|} \hline
 {\bf Standard value:} & {\bf Notes:} \\ \hline
 Unknown & Default value if not specified.\\
 None & No ionospheric correction performed.\\
 RMextract & The RMextract package \citep{RMextract}.\\
 ionFR & The ionospheric Faraday rotation package \citep{Sotomayor13}. \\
-FARAD & The AIPS task FARAD.\footnote{www.aips.nrao.edu/cgi-bin/ZXHLP2.PL?FARAD}\\
-ALBUS & The ionosphere correction tool in the Advanced Long Baseline User Software (ALBUS).\footnote{github.com/twillis449/ALBUS\_ionosphere}\\
-FRion & The FRion Python package for time-averaged image-domain ionospheric correction.\footnote{frion.readthedocs.io}\\
+FARAD & The AIPS task FARAD.$^a$\\
+ALBUS & The ionosphere correction tool in the Advanced Long Baseline User Software (ALBUS).$^b$\\
+FRion & The FRion Python package for time-averaged image-domain ionospheric correction.$^c$\\
 \hline
 \end{tabular}
+\tablecomments{
+$a$. www.aips.nrao.edu/cgi-bin/ZXHLP2.PL?FARAD\\
+$b$. github.com/twillis449/ALBUS\_ionosphere\\
+$c$. frion.readthedocs.io
+}
 \end{center}
 \label{default}
 \end{table}%
 
 
-
-
 \begin{table}[h]
-\caption{Standard values for polarization bias correction method (`pol\_bias')}\label{tab:pol_bias}
+\caption{Standard values for polarization bias correction method}\label{tab:pol_bias}
 \begin{center}
-\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+\begin{tabular}{|l|p{0.7\linewidth}|} \hline
 {\bf Standard value:} & {\bf Notes:} \\ \hline
 Unknown & Default value if not specified.\\
 None & No bias correction performed.\\
@@ -102,11 +103,10 @@ Not described & The paper reports that a correction was performed, but does not 
 
 
 
-
 \begin{table}[h]
-\caption{Standard values for telescope used (`telescope')}\label{tab:telescope}
+\caption{Standard values for telescope used}\label{tab:telescope}
 \begin{center}
-\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+\begin{tabular}{|l|l|} \hline
 {\bf Standard value:} & {\bf Notes:} \\ \hline
 Unknown & Default value if not specified.\\
 VLA & Karl G. Jansky Very Large Array\footnote{To avoid splitting entries between VLA and JVLA, we suggest only using VLA.}\\
@@ -134,9 +134,9 @@ FAST & Five-hundred-meter Aperture Spherical Telescope\\
 
 
 \begin{table}[h]
-\caption{Standard values for Stokes extraction method (`flux\_type')}\label{tab:flux_type}
+\caption{Standard values for Stokes extraction method}\label{tab:flux_type}
 \begin{center}
-\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+\begin{tabular}{|l|p{0.7\linewidth}|} \hline
 {\bf Standard value:} & {\bf Notes:} \\ \hline
 Unknown & Default value if not specified.\\
 Peak & Stokes values extracted from single pixel (peak Stokes I or polarized intensity).\\
@@ -158,9 +158,10 @@ Visibilities & Stokes values extract from modelling or fitting of interferometri
 \begin{table}[h]
 \caption{Standard values for source classification}\label{tab:source_type}
 \begin{center}
-\begin{tabular}{|l|p{0.6\linewidth}|} \hline
+\begin{tabular}{|l|l|} \hline
 {\bf Standard value:} & {\bf Notes:} \\ \hline
 `' (empty string) & Default value if not specified.\\
+Unknown & \\
 Pulsar & \\
 Galaxy & Radio Galaxy \\
 AGN & Active Galactic Nucleus \\
