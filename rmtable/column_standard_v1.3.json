@@ -1,5 +1,3 @@
-#Note that any changes to this file should be reflected in the documentation as well.
-
 {
     "ra": {
         "dtype": "f8",

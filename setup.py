@@ -10,7 +10,7 @@ NAME = 'RMTable'
 DESCRIPTION = 'Reading, writing, and manipulating RMTables (radio astronomy Faraday rotation catalogs)'
 URL = 'https://github.com/CIRADA-Tools/RMTable'
 REQUIRES_PYTHON = '>=3.5.0'
-VERSION = '1.2.0'
+VERSION = '1.2.1'
 
 REQUIRED = [
     'numpy', 'astropy',
