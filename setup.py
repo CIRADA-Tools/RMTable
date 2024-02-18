@@ -48,6 +48,6 @@ setup(
         'Topic :: Scientific/Engineering :: Astronomy',
     ],
     maintainer='Cameron Van Eck',
-    maintainer_email='cameron.van.eck@utoronto.ca',
+    maintainer_email='cameron.vaneck@anu.edu.au',
 )
 

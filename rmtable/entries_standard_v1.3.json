@@ -55,7 +55,8 @@
         "Peak",
         "Box",
         "Visibilities",
-        "Gaussian fit - Peak"
+        "Gaussian fit - Peak",
+        "Gaussian fit - Integrated"
     ],
     "complexity_test": [
         "",
@@ -72,6 +73,7 @@
         "Unknown",
         "None",
         "RMextract",
+        "RM-extract",
         "ionFR",
         "FARAD",
         "ALBUS",

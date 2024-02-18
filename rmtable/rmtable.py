@@ -428,84 +428,95 @@ class RMTable(Table):
         options added to the standard.
         """
         invalid_methods = []
-        for entry in self["rm_method"]:
-            if (entry not in self.standard_rm_method) and (
-                entry not in invalid_methods
-            ):
-                invalid_methods.append(entry)
-        if len(invalid_methods) > 0:
-            print(
-                "The following non-standard RM method(s) were found (at least once each):"
-            )
-            print(*invalid_methods, sep="\n")
+        if "rm_method" in self.colnames:
+            for entry in self["rm_method"]:
+                if (entry not in self.standard_rm_method) and (
+                    entry not in invalid_methods
+                ):
+                    invalid_methods.append(entry)
+            if len(invalid_methods) > 0:
+                print(
+                    "The following non-standard RM method(s) were found (at least once each):"
+                )
+                print(*invalid_methods, sep="\n")
 
         invalid_polbias = []
-        for entry in self["pol_bias"]:
-            if (entry not in self.standard_pol_bias) and (entry not in invalid_polbias):
-                invalid_polbias.append(entry)
-        if len(invalid_polbias) > 0:
-            print(
-                "The following non-standard polarization bias correction method(s) were found (at least once each):"
-            )
-            print(*invalid_polbias, sep="\n")
+        if "pol_bias" in self.colnames:
+            for entry in self["pol_bias"]:
+                if (entry not in self.standard_pol_bias) and (entry not in invalid_polbias):
+                    invalid_polbias.append(entry)
+            if len(invalid_polbias) > 0:
+                print(
+                    "The following non-standard polarization bias correction method(s) were found (at least once each):"
+                )
+                print(*invalid_polbias, sep="\n")
 
         invalid_telescope = []
-        for entry in self["telescope"]:
-            for scope in entry.split(","):
-                if (scope not in self.standard_telescope) and (
-                    scope not in invalid_telescope
-                ):
-                    invalid_telescope.append(scope)
-        if len(invalid_telescope) > 0:
-            print(
-                "The following non-standard telescope(s) were found (at least once each):"
-            )
-            print(*invalid_telescope, sep="\n")
+        if "telescope" in self.colnames:
+            for entry in self["telescope"]:
+                for scope in entry.split(","):
+                    if (scope not in self.standard_telescope) and (
+                        scope not in invalid_telescope
+                    ):
+                        invalid_telescope.append(scope)
+            if len(invalid_telescope) > 0:
+                print(
+                    "The following non-standard telescope(s) were found (at least once each):"
+                )
+                print(*invalid_telescope, sep="\n")
+
 
         invalid_type = []
-        for entry in self["type"]:
-            if (entry not in self.standard_classification) and (
-                entry not in invalid_type
-            ):
-                invalid_type.append(entry)
-        if len(invalid_type) > 0:
-            print(
-                "The following non-standard source classification(s) were found (at least once each):"
-            )
-            print(*invalid_type, sep="\n")
+        if "type" in self.colnames:
+            for entry in self["type"]:
+                if (entry not in self.standard_classification) and (
+                    entry not in invalid_type
+                ):
+                    invalid_type.append(entry)
+            if len(invalid_type) > 0:
+                print(
+                    "The following non-standard source classification(s) were found (at least once each):"
+                )
+                print(*invalid_type, sep="\n")
+
 
         invalid_flux = []
-        for entry in self["flux_type"]:
-            if (entry not in self.standard_flux_type) and (entry not in invalid_flux):
-                invalid_flux.append(entry)
-        if len(invalid_flux) > 0:
-            print(
-                "The following non-standard flux measurement type(s) were found (at least once each):"
-            )
-            print(*invalid_flux, sep="\n")
+        if "flux_type" in self.colnames:
+            for entry in self["flux_type"]:
+                if (entry not in self.standard_flux_type) and (entry not in invalid_flux):
+                    invalid_flux.append(entry)
+            if len(invalid_flux) > 0:
+                print(
+                    "The following non-standard flux measurement type(s) were found (at least once each):"
+                )
+                print(*invalid_flux, sep="\n")
 
         invalid_complexity_test = []
-        for entry in self["complex_test"]:
-            if (entry not in self.standard_complexity_test) and (
-                entry not in invalid_complexity_test
-            ):
-                invalid_complexity_test.append(entry)
-        if len(invalid_complexity_test) > 0:
-            print(
-                "The following non-standard complexity test type(s) were found (at least once each):"
-            )
-            print(*invalid_complexity_test, sep="\n")
+        if "complex_test" in self.colnames:
+            for entry in self["complex_test"]:
+                if (entry not in self.standard_complexity_test) and (
+                    entry not in invalid_complexity_test
+                ):
+                    invalid_complexity_test.append(entry)
+            if len(invalid_complexity_test) > 0:
+                print(
+                    "The following non-standard complexity test type(s) were found (at least once each):"
+                )
+                print(*invalid_complexity_test, sep="\n")
+
+
         invalid_ionosphere = []
-        for entry in self["ionosphere"]:
-            if (entry not in self.standard_ionosphere) and (
-                entry not in invalid_ionosphere
-            ):
-                invalid_ionosphere.append(entry)
-        if len(invalid_ionosphere) > 0:
-            print(
-                "The following non-standard ionosphere correction type(s) were found (at least once each):"
-            )
-            print(*invalid_ionosphere, sep="\n")
+        if "ionosphere" in self.colnames:
+            for entry in self["ionosphere"]:
+                if (entry not in self.standard_ionosphere) and (
+                    entry not in invalid_ionosphere
+                ):
+                    invalid_ionosphere.append(entry)
+            if len(invalid_ionosphere) > 0:
+                print(
+                    "The following non-standard ionosphere correction type(s) were found (at least once each):"
+                )
+                print(*invalid_ionosphere, sep="\n")
         if (
             len(
                 invalid_methods
