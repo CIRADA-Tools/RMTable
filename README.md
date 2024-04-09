@@ -45,3 +45,10 @@ Conversions of new catalogs into the RMTable format for inclusion into the conso
 
 Cameron Van Eck (cameron.vaneck (at) anu.edu.au)
 
+
+### Process for updating catalog (for maintainers):
+ - Check new individual catalogs for suitability: load in Python, check catalog values (`table.verify_columns()`, `table.verify_limits()`, `table.verify_standard_strings()`, manual inspection of columns to check units). Save as .fits table into `individual_catalogs/` directory.
+ - Update any existing catalogs as desired (e.g., updating `catalog_name` columns on papers that now have proper bibcodes)
+ - Update `CATALOG_HISTORY` file to describe new catalogs, changes. Updates `docs/Catalogs_notes.tex` and recompile.
+ - If standard strings need updating to include new values, modify `rmtable/entries_standard_v<X>.json`. Update `docs/Standard_entries.tex` and recompile.
+ - TBC
