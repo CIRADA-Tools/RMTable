@@ -27,10 +27,10 @@ The most current version of the RMTable standard can be found in these documents
 
 ### Catalog
 
-The consolidated catalog, which currently contains 55 819 RMs from 42 catalogs, is available in the consolidated_catalog_* files above or these links: [FITS format](https://github.com/CIRADA-Tools/RMTable/raw/master/consolidated_catalog_ver1.1.0.fits.zip) [TSV format](https://github.com/CIRADA-Tools/RMTable/raw/master/consolidated_catalog_ver1.1.0.tsv.zip) and [VOTable format](https://github.com/CIRADA-Tools/RMTable/raw/master/consolidated_catalog_ver1.1.0.xml.zip)  
+The consolidated catalog, which currently contains 59 530 RMs from 46 catalogs, is available in the consolidated_catalog_* files above or these links: [FITS format](https://github.com/CIRADA-Tools/RMTable/raw/master/consolidated_catalog_ver1.2.0.fits.zip) [TSV format](https://github.com/CIRADA-Tools/RMTable/raw/master/consolidated_catalog_ver1.2.0.tsv.zip) and [VOTable format](https://github.com/CIRADA-Tools/RMTable/raw/master/consolidated_catalog_ver1.2.0.xml.zip)  
 This catalog is provided on an as-is basis; there may be uncaught transcription errors in adapting the published catalogs into the RMTable catalog format. It's also known that some of the published values/sources are unphysical (negative Stokes I, fractional polarizations outside of \[0,1), unrealistic spectral indices, etc). Users should use their discretion when selecting sources in the catalog to use. Please see Section 3.2 of the [paper](https://www.dropbox.com/s/ebdnhad8vypx4cc/RMTable.pdf?dl=0) for more suggestions on catalog usage.
 
-The DOI for the current version of the catalog (ver1.1.0) is [10.5281/zenodo.7894467](https://zenodo.org/record/7894467/). The DOI for all versions of the catalog is [10.5281/zenodo.6702842](https://zenodo.org/record/6702842).
+The DOI for the current version of the catalog (ver1.2.0) is [10.5281/zenodo.10963566](https://zenodo.org/records/10963566). The DOI for all versions of the catalog is [10.5281/zenodo.6702842](https://zenodo.org/record/6702842).
 
 
 The list of individual catalogs/papers that have been incorporated into the consolidated catalog, with some notes on how they were adapted, can be found [here](https://github.com/CIRADA-Tools/RMTable/raw/master/docs/Catalog_notes.pdf).
@@ -46,9 +46,14 @@ Conversions of new catalogs into the RMTable format for inclusion into the conso
 Cameron Van Eck (cameron.vaneck (at) anu.edu.au)
 
 
-### Process for updating catalog (for maintainers):
- - Check new individual catalogs for suitability: load in Python, check catalog values (`table.verify_columns()`, `table.verify_limits()`, `table.verify_standard_strings()`, manual inspection of columns to check units). Save as .fits table into `individual_catalogs/` directory.
- - Update any existing catalogs as desired (e.g., updating `catalog_name` columns on papers that now have proper bibcodes)
+### Checklist for updating catalog (for maintainers):
+ - Check new individual catalogs for suitability: load in Python, check catalog values (`table.verify_columns()`, `table.verify_limits()`, `table.verify_standard_strings()`, `table.enforce_column_formats()`, manual inspection of columns to check units). Save as .fits table into `individual_catalogs/` directory.
+ - Update any existing catalogs as needed (e.g., updating `catalog_name` columns on papers that now have proper bibcodes)
  - Update `CATALOG_HISTORY` file to describe new catalogs, changes. Updates `docs/Catalogs_notes.tex` and recompile.
  - If standard strings need updating to include new values, modify `rmtable/entries_standard_v<X>.json`. Update `docs/Standard_entries.tex` and recompile.
- - TBC
+ - Run Consolidate catalogs.ipynb notebook and save new consolidated catalog.
+ - Git move old catalog .zip files to `old_catalogs/`
+ - Rename new catalogs with correct version number, create .zip files.
+ - Commit changes (changes to individual catalogs, new consolidated catalogs).
+ - Submit new consolidated catalog to Zenodo.
+ - udpate DOI and version number in README.md.
