@@ -71,3 +71,34 @@
 
 1.1.0:
     Converted tables to table format 1.3, which renames two of the columns to avoid SQL conflicts. No changes to contents of catalog.
+
+1.2.0:
+    Added O'Sullivan et al. 2023 (LoTSS DR2, 2023MNRAS.519.5723O) catalog. RMTable was downloaded from https://lofar-mksp.org/data/.
+        Changed values: 'catalog_name' was changed from 'LoTSS DR2 (O'Sullivan et al. 2022)' to '2023MNRAS.519.5723O'.
+    Added Ranchod et al. 2024 (https://arxiv.org/pdf/2403.13500.pdf) catalog. RMTable supplied by lead author.
+        Changed values: no changes other than adding missing columns.
+        Given temporary catalog_name and dataref of "Ranchod+24"; will change to publication bibcode once fully published.
+    Added Taylor et al. 2024 (MIGHTEE Pol) catalog. Catalog downloaded from IDIA archive as FITS tables (non-RMTable), converted to RMTable.
+        Catalog is split into two parts: COSMOS and XMM-LSS (different fields). Merging together.  
+        Columns renamed as appropriate.
+        Frame is unknown, therefore standard process is to assume ICRS.  
+        Bias correction method: George et al 2012 (2012PASA...29..214G)  
+        Position error taken as larger of de-projected RA or Dec error.  
+        RM method set as RM Synthesis - Fractional polarization.  
+        Flux type left as unknown and aperture left blank -- Stokes I is integrated, polint is peak.  
+        Beam size set to 18". Reference frequency not set; paper is not explicit if common-resolution cubes used.  
+    Added Vanderwoude et al. 2024 (POSSUM pilot; 2024arXiv240315668V) catalog.
+        Catalog supplied by author: filtered version of published catalogs. From author:
+             - only components with S/N_pol >= 8 are included
+             - any fracpols > 100% were removed (1-2 per catalogue)
+             - in SB43773, there were 3 components with anomalously large RMSFs, and they seemed to be actually bright spots on SNRs and not background sources (this is noted in the paper), so they were also removed.
+    Modified Clegg et al. 1992 (1992ApJ...386..143C) and Minter & Spangler 1996 (1996ApJ...458..194M) catalogs: 
+        Minter had coordinate conversion errors between original catalog and Jo-Anne Brown's machine readable version.
+        Clegg had loss of coordinate precision between original catalog and Jo-Anne Brown's machine readable version.
+        Both have been updated to the original coordinates, by Anthony Nunez and Mehrnoosh Tahani.
+
+
+To-do for next version:
+    - update catalog_name for Ranchod+24 and Vanderwoude+24 to use bibcodes.
+    - include SPICE-RACS DR1 (deferred from 1.2.0 due to need for correction/erratum)
+

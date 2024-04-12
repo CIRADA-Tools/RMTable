@@ -42,15 +42,18 @@ In addition, we strongly emphasize the importance of referencing the original RM
 \startdata
 \citet{Taylor09} & 37 543 & 2009ApJ...702.1230T\\
 \citet{Schnitzeler2019} & 6 934 & 2019MNRAS.485.1293S\\
+\citet{OSullivan2023} & 2 461 & 2023MNRAS.519.5723O\\
 \citet{VanEck2021} & 2 234 & 2021ApJS..253...48V\\
 \citet{Betti2019} & 1 105 & 2019ApJ...871..215B\\
 \citet{Farnes2014} & 907 & 2014ApJS..212...15F\\
+\citet{Vanderwoude2024} & 831 & 10.3847/1538-3881/ad2fc8 \\
 \citet{Mao2010} & 813 & 2010ApJ...714.1170M\\
 \citet{Tabara1980}$^a$ & 704 & 1980A\&AS...39..379T\\
 \citet{Broten1988}$^{a,b}$ & 672 & 1988Ap\&SS.141..303B\\
 \citet{Simard-Normandin1981} & 555 & 1981ApJS...45...97S\\
 \citet{Riseley2020} & 516 & 2020PASA...37...29R\\
 \citet{Brown2003} & 380 & 2003ApJS..145..213B\\
+\citet{Taylor2024} & 324 & 2024MNRAS.528.2511T\\
 \citet{Mao2012LMC} & 305 & 2012ApJ...759...25M\\
 \citet{Mao2012Halo} & 302 & 2012ApJ...755...21M\\
 \citet{Feain2009} & 281 & 2009ApJ...707..114F\\
@@ -64,7 +67,8 @@ In addition, we strongly emphasize the importance of referencing the original RM
 \citet{Heald09}$^c$ & 133 & 2009A\&A...503..409H\\
 \citet{Shanahan2019} & 127 & 2019ApJ...887L...7S\\
 \citet{Clarke2001} & 125 & 2001ApJ...547L.111C\\
-\citet{Minter1996}$^b$ & 98 & 1996ApJ...458..194M\\
+\citet{Minter1996} & 98 & 1996ApJ...458..194M\\
+\citet{Ranchod2024} & 95 & Ranchod+24 \\
 \citet{VanEck2018a} & 92 & 2018A\&A...613A..58V\\
 \citet{Law2011} & 90 & 2011ApJ...728...57L\\
 \citet{Riseley2018} & 81 & 2018PASA...35...43R\\
@@ -73,7 +77,7 @@ In addition, we strongly emphasize the importance of referencing the original RM
 \citet{Roy2005} & 67 & 2005MNRAS.360.1305R\\
 \citet{Livingston2021} & 62 & 2021MNRAS.502.3814L\\
 \citet{Oren1995}$^b$ & 61 & 1995ApJ...445..624O\\
-\citet{Clegg1992}$^b$ & 56 & 1992ApJ...386..143C\\
+\citet{Clegg1992} & 56 & 1992ApJ...386..143C\\
 \citet{Kim2016} & 49 & 2016ApJ...829..133K\\
 \citet{Battye2011} & 45 & 2011MNRAS.413..132B\\
 \citet{Ma2019} & 35 & 2019MNRAS.487.3432M\\
@@ -111,6 +115,8 @@ Some of the individual catalogs within the consolidated RM catalog required some
 
 {\bf \citet{Riseley2018, Riseley2020}:} These catalogs use some of the same data as each other, so sources present in both catalogs may not be fully independent measurements.
 
+{\bf \citet{Taylor2024}:} Catalog downloaded from IDIA archive as two files (one each for COSMOS and XMMLSS fields); these were merged together into a single catalog. Frame is unknown, therefore standard process is to assume ICRS. Position error taken as larger of de-projected RA or Dec error. Flux type left as unknown and aperture left blank -- Stokes I is integrated, polint is peak. Beam reference frequency not set; paper is not explicit if common-resolution cubes used.  
+
 {\bf \citet{OSullivan2017}:} The {\it Vizier} version of this catalog does not include the measured RMs; the RM values were extracted from the paper's LaTeX source available on the arXiv. This catalog reports multiple components for some sources; each component was converted to a separate row in the consolidated catalog. The RM width column was determined by combining the $\sigma_\mathrm{RM}$ and $\Delta_\mathrm{RM}$ columns of the original tables (each component had a value for only one or the other). Sources fit with a Faraday thin model have NaN values for RM width.
 
 {\bf \citet{Klein2003}:} The data these authors used to determine RMs have also been used in other projects \citep{Rossetti2008, Farnes2014}, so these RMs may not be statistically independent.
@@ -119,11 +125,15 @@ Some of the individual catalogs within the consolidated RM catalog required some
 
 {\bf \citet{Clarke2001}:} The RM values are not available online, but were supplied by the author.
 
-{\bf \citet{Clegg1992, Oren1995, Minter1996}:} No online machine-readable version of these catalogs were found; these RMs were taken from a table assembled by Jo-Anne Brown. The position of each RM is limited in precision to 0.1\degr\ due to significant figures.
+{\bf \citet{Oren1995}:} No online machine-readable version of this catalog was found; these RMs were taken from a table assembled by Jo-Anne Brown. The position of each RM is limited in precision to 0.1\degr\ due to significant figures.
+
+{\bf \citet{Clegg1992,  Minter1996}:} In consolidated catalog versions up to and including 1.1.0, the coordinates were from the table by Jo-Anne Brown and had limited precision. From version 1.2.0, the coordinates have been replaced with those from the original papers. The coordinates from \citet{Minter1996} were found to be inaccurately converted from B9150 to J2000 in the Brown compilation; these were corrected in version 1.2.0.
+
 
 {\bf \citet{Battye2011}:} The source positions are based on short names, resulting in a position accuracy limited to approximately 0.1\degr.
 
 {\bf \citet{Costa2018}:} The authors supplied RMs calculated from two different methods; we have used the EVPA linear fitting method values for the RM column in the consolidated catalog.
+
 
 
 
