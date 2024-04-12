@@ -45,6 +45,7 @@ Conversions of new catalogs into the RMTable format for inclusion into the conso
 
 Cameron Van Eck (cameron.vaneck (at) anu.edu.au)
 
+***
 
 ### Checklist for updating catalog (for maintainers):
  - Check new individual catalogs for suitability: load in Python, check catalog values (`table.verify_columns()`, `table.verify_limits()`, `table.verify_standard_strings()`, `table.enforce_column_formats()`, manual inspection of columns to check units). Save as .fits table into `individual_catalogs/` directory.
