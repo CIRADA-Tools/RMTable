@@ -539,6 +539,38 @@ class RMTable(Table):
             if not check:
                 warnings.warning(f"{colname} has invalid ucd '{ucd}'")
 
+    def enforce_column_formats(self,verbose=False):
+        """Force all standard columns to have the standard formats. Will raise
+        Exception if the conversion cannot be performed.
+        This is needed to ensure that tables can be merged. E.g., one table
+        can end up with a cat_id column full of integers, which astropy.table
+        can't merge into a table with cat_id full of strings.
+        Modifies table in place. Doesn't enforce string length, but does enforce
+        32 vs 64 bit numbers.
+        """
+        for column in self.standard_columns:
+            if column not in self.colnames: #If a column is not present at all, skip it.
+                continue
+            #Two types of columns: strings, and numerics. Strings can get read
+            #in with either the 'U' or 'S' codes, and some length.
+            #Numerics (ints and floats) are slightly fussy because I don't
+            #care about endianness in the dtype, just type and bit depth.
+            if self.standard_dtypes[column] == 'U': #string column
+                if (self[column].dtype.kind == 'U') or (self[column].dtype.kind == 'S'):
+                    continue #string column properly identified.
+            else: #numeric column
+                if ((self[column].dtype.kind == self.standard_dtypes[column][0]) and
+                    (str(self[column].dtype.itemsize) == self.standard_dtypes[column][1]) ):
+                    continue #numeric column has correct type and bit depth
+                    
+            #If the loop gets this far, the type must be wrong. Convert!
+            try:
+                if verbose:
+                    print(f"Converting column {column} from type {self[column].dtype.str} to type {self.standard_dtypes[column]}")
+                self[column] = self[column].astype(self.standard_dtypes[column])
+            except:
+                raise Exception(f"Unable to convert column {column} from type {self[column].dtype.str} to type {self.standard_dtypes[column]}")
+
 
 
 
