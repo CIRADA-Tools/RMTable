@@ -101,4 +101,5 @@
 To-do for next version:
     - update catalog_name for Ranchod+24 and Vanderwoude+24 to use bibcodes.
     - include SPICE-RACS DR1 (deferred from 1.2.0 due to need for correction/erratum)
+    - fix coordinates in Rosetti+08 catalog: currently in B1950, need to be converted to ICRS. (Discovered by Jeroen Stil)
 
